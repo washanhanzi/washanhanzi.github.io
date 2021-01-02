@@ -1,0 +1,23 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Posts on 还不知道</title>
+		<link>https://washanhanzi.github.io/posts/</link>
+		<description>Recent content in Posts on 还不知道</description>
+		<generator>Hugo -- gohugo.io</generator>
+		<language>en-us</language>
+		<copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
+		<lastBuildDate>Tue, 26 Mar 2019 08:47:11 +0100</lastBuildDate>
+		<atom:link href="https://washanhanzi.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+		
+		<item>
+			<title>My First Post</title>
+			<link>https://washanhanzi.github.io/posts/test/</link>
+			<pubDate>Tue, 26 Mar 2019 08:47:11 +0100</pubDate>
+			
+			<guid>https://washanhanzi.github.io/posts/test/</guid>
+			<description></description>
+			<content type="html"><![CDATA[]]></content>
+		</item>
+		
+	</channel>
+</rss>

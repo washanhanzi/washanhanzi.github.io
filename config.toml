@@ -1,5 +1,6 @@
-baseURL = "http://example.org/"
+baseURL = "https://washanhanzi.github.io/"
 languageCode = "en-us"
+publishdir = "docs"
 title = "还不知道"
 theme = "hermit"
 # enableGitInfo = true
