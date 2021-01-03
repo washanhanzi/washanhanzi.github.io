@@ -1,7 +1,7 @@
 baseURL = "https://washanhanzi.github.io/"
 languageCode = "en-us"
 publishdir = "docs"
-title = "还不知道"
+title = "Null"
 theme = "hermit"
 # enableGitInfo = true
 pygmentsCodefences  = true
@@ -12,6 +12,18 @@ copyright = "This work is licensed under a Creative Commons Attribution-NonComme
 enableEmoji = true  # Shorthand emojis in content files - https://gohugo.io/functions/emojify/
 # googleAnalytics = "UA-123-45"
 # disqusShortname = "yourdiscussshortname"
+
+# i18n
+DefaultContentLanguage = "en"
+[languages]
+  [languages.en]
+    title = "Null"
+    languageName = "English"
+    contentDir = "content/en"
+  [languages.zh]
+    title = "还不知道"
+    languageName = "zh-hans"
+    contentDir = "content/zh"
 
 [author]
   name = "Frank"
@@ -74,8 +86,13 @@ enableEmoji = true  # Shorthand emojis in content files - https://gohugo.io/func
     url = "posts/"
     weight = 10
 
-  # [[menu.main]]
-  #   name = "About"
-  #   url = "about-hugo/"
-  #   weight = 20
+   [[menu.main]]
+     name = "English"
+     url = "https://washanhanzi.github.io"
+     weight = 20
+
+   [[menu.main]]
+     name = "中文"
+     url = "/zh"
+     weight = 30
 
