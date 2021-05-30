@@ -334,17 +334,17 @@ rft.Range(func(fd protoreflect.FieldDescriptor, fv protoreflect.Value) bool {
 				s.broadcast &lt;- &amp;entity.BroadcastPayload{  
 					 ID: ID,
 					 Event: EventEnum.RemoveConnection
-			}
-			return nil  
+				}
+				return nil  
 			case response := &lt;-conn:  
 				if status, ok := status.FromError(srv.Send(response)); ok {  
-				switch status.Code() {  
-				case codes.OK:  
-					//noop  
-				case codes.Unavailable, codes.Canceled, codes.DeadlineExceeded:  
-					return nil  
-				default:  
-					return nil  
+					switch status.Code() {  
+					case codes.OK:  
+						//noop  
+					case codes.Unavailable, codes.Canceled, codes.DeadlineExceeded:  
+						return nil  
+					default:  
+						return nil  
 			 }  
 		 }}
 	}

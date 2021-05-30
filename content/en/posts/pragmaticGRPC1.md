@@ -380,17 +380,17 @@ func (s *server) Subscribe(req *pb.SubscribeRequest, srv pb.SubscribeServer) err
 				s.broadcast <- &entity.BroadcastPayload{  
 					 ID: ID,
 					 Event: EventEnum.RemoveConnection
-			}
-			return nil  
+				}
+				return nil  
 			case response := <-conn:  
 				if status, ok := status.FromError(srv.Send(response)); ok {  
-				switch status.Code() {  
-				case codes.OK:  
-					//noop  
-				case codes.Unavailable, codes.Canceled, codes.DeadlineExceeded:  
-					return nil  
-				default:  
-					return nil  
+					switch status.Code() {  
+					case codes.OK:  
+						//noop  
+					case codes.Unavailable, codes.Canceled, codes.DeadlineExceeded:  
+						return nil  
+					default:  
+						return nil  
 			 }  
 		 }}
 	}
