@@ -1,7 +1,7 @@
 baseURL = "https://washanhanzi.github.io/"
 languageCode = "en-us"
 publishdir = "docs"
-title = "Null"
+title = "N1ll"
 theme = "hermit"
 # enableGitInfo = true
 pygmentsCodefences  = true
@@ -17,11 +17,11 @@ enableEmoji = true  # Shorthand emojis in content files - https://gohugo.io/func
 DefaultContentLanguage = "en"
 [languages]
   [languages.en]
-    title = "Null"
+    title = "N1ll"
     languageName = "English"
     contentDir = "content/en"
   [languages.zh]
-    title = "还不知道"
+    title = "N1ll"
     languageName = "zh-hans"
     contentDir = "content/zh"
 

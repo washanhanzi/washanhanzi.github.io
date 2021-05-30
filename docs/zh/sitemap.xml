@@ -3,20 +3,6 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://washanhanzi.github.io/zh/tags/</loc>
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://washanhanzi.github.io/tags/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="zh"
-                href="https://washanhanzi.github.io/zh/tags/"
-                />
-  </url>
-  
-  <url>
     <loc>https://washanhanzi.github.io/zh/</loc>
     <xhtml:link
                 rel="alternate"
@@ -27,6 +13,20 @@
                 rel="alternate"
                 hreflang="zh"
                 href="https://washanhanzi.github.io/zh/"
+                />
+  </url>
+  
+  <url>
+    <loc>https://washanhanzi.github.io/zh/tags/</loc>
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://washanhanzi.github.io/tags/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh"
+                href="https://washanhanzi.github.io/zh/tags/"
                 />
   </url>
   

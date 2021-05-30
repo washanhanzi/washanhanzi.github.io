@@ -11,7 +11,7 @@
 <meta itemprop="description" content=".proto file This Artical is fully based on version proto3 and golang. In .proto: The package field should contain version infomation, like HelloService.v1 The request and response message should name with a certain rule, generally it will be the the service rpc method name with a Request or Response suffix. Like: rpc HelloWorld(HelloWorldRequest) returns (HelloWorldResponse){} A good place to start is Goole API design guide. Just keep in mind, protocol">
 <meta itemprop="datePublished" content="2021-05-30T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2021-05-30T00:00:00+00:00" />
-<meta itemprop="wordCount" content="2681">
+<meta itemprop="wordCount" content="2683">
 
 
 
@@ -19,9 +19,9 @@
 <meta property="og:title" content="Pragmatic gRPC 1" />
 <meta property="og:description" content=".proto file This Artical is fully based on version proto3 and golang. In .proto: The package field should contain version infomation, like HelloService.v1 The request and response message should name with a certain rule, generally it will be the the service rpc method name with a Request or Response suffix. Like: rpc HelloWorld(HelloWorldRequest) returns (HelloWorldResponse){} A good place to start is Goole API design guide. Just keep in mind, protocol" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://washanhanzi.github.io/posts/intogrpc/" />
+<meta property="og:url" content="https://washanhanzi.github.io/posts/pragmaticgrpc1/" />
 <meta property="article:published_time" content="2021-05-30T00:00:00+00:00" />
-<meta property="article:modified_time" content="2021-05-30T00:00:00+00:00" /><meta property="og:site_name" content="Null" />
+<meta property="article:modified_time" content="2021-05-30T00:00:00+00:00" /><meta property="og:site_name" content="N1ll" />
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Pragmatic gRPC 1"/>
 <meta name="twitter:description" content=".proto file This Artical is fully based on version proto3 and golang. In .proto: The package field should contain version infomation, like HelloService.v1 The request and response message should name with a certain rule, generally it will be the the service rpc method name with a Request or Response suffix. Like: rpc HelloWorld(HelloWorldRequest) returns (HelloWorldResponse){} A good place to start is Goole API design guide. Just keep in mind, protocol"/>
@@ -44,7 +44,7 @@
 		<div class="hdr-wrapper section-inner">
 			<div class="hdr-left">
 				<div class="site-branding">
-					<a href="https://washanhanzi.github.io/">Null</a>
+					<a href="https://washanhanzi.github.io/">N1ll</a>
 				</div>
 				<nav class="site-nav hide-in-mobile">
 					
@@ -76,13 +76,15 @@
 			</header>
 			<div class="content">
 				<h2 id="proto-file"><code>.proto</code> file<a href="#proto-file" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<blockquote>
 <p>This Artical is fully based on version proto3 and <code>golang</code>.</p>
+</blockquote>
 <p>In <code>.proto</code>:</p>
 <ul>
 <li>The <code>package</code> field should contain version infomation, like <code>HelloService.v1</code></li>
 <li>The request and response message should name with a certain rule, generally it will be the the service rpc method name with a <code>Request</code> or <code>Response</code> suffix. Like:</li>
 </ul>
-<pre><code>	rpc HelloWorld(HelloWorldRequest) returns (HelloWorldResponse){}
+<pre><code>rpc HelloWorld(HelloWorldRequest) returns (HelloWorldResponse){}
 </code></pre><p>A good place to start is <a href="https://cloud.google.com/apis/design">Goole API design guide</a>.</p>
 <p>Just keep in mind, protocol buffer language, like <code>go</code>, always have a default value, it can&rsquo;t differentiating unset value from default value. It&rsquo;s best to have a default value indicate unset value. As an example, always keep <code>0</code> as the unkown or unset value for <code>enum</code> (you should do it in <code>go</code> either, always start from <code>iota+1</code>):</p>
 <pre><code>enum Hello { 
@@ -104,8 +106,8 @@
 <pre><code>protoc --proto_path proto  --gogofaster_out=&quot;plugins=grpc:.&quot; ./proto/*.proto
 </code></pre><p>This package provides lots of extentions to custimize the <code>[golang/protobuf](https://github.com/golang/protobuf)</code>. Like the support of golang data type and marshaller function.</p>
 <p>The problem is the helpful library now is <a href="https://github.com/gogo/protobuf/issues/691">looing for new ownership</a>, and it didn&rsquo;t support the new version of go protocol buffer api.</p>
-<p>Go have two version of protocol buffer libriry, the <a href="https://pkg.go.dev/github.com/golang/protobuf">v1</a> and <a href="https://pkg.go.dev/google.golang.org/protobuf">v2</a>. The newer version have many improvements like the <a href="https://blog.golang.org/protobuf-apiv2">reflection api</a>.</p>
-<p>If you want to start a new project with gRPC, I suggest you use the v2 api. Then you have 2 choices to cast your <code>struct</code> type to the generated type.</p>
+<p>Go have two version of protocol buffer libriry, <a href="https://pkg.go.dev/github.com/golang/protobuf">v1</a> and <a href="https://pkg.go.dev/google.golang.org/protobuf">v2</a>. The newer version have many improvements like the <a href="https://blog.golang.org/protobuf-apiv2">reflection api</a>.</p>
+<p>If you want to start a new project with gRPC, I suggest start with v2 api. Then you have 2 choices to cast your <code>struct</code> type to the generated type.</p>
 <ol>
 <li>Serillize and desrillize. Make sure you use the right library: <code>google.golang.org/protobuf/encoding/protojson</code>.</li>
 <li>Write some boilerplate code by your own. (or maybe you want do it with code generation?)</li>
@@ -252,7 +254,7 @@ rft.Range(func(fd protoreflect.FieldDescriptor, fv protoreflect.Value) bool {
 	//compare fd.JSONName() to the maskPaths value
 	//get corresponse field value with fv.(type)
 }
-</code></pre><h2 id="streaming-with-broadcast">Streaming with Broadcast<a href="#streaming-with-broadcast" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+</code></pre><h2 id="stream-with-broadcast">Stream with Broadcast<a href="#stream-with-broadcast" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <p>The most excitment part about gRPC of couse is its streaming ability. Though it&rsquo;s no easy feat to implement that for beginners of concurrency programming (like me). I hope I can ease your pain when implenting the gRPC streaming with broadcast like feature.</p>
 <p>The basic here are:</p>
 <ul>
@@ -286,7 +288,7 @@ rft.Range(func(fd protoreflect.FieldDescriptor, fv protoreflect.Value) bool {
 <p>This will avoid this <code>map</code> structure or maybe all the <code>channel</code> things.</p>
 <pre><code>func (s *server) TestHandler(req *pb.TestRequest, srv pb.TestServer) error {
 	...
-	}
+}
 </code></pre><p>For a server streaming handler above, you can share the <code>srv</code> between goroutines. The rest is up to you, you can put the <code>srv</code> in a <code>map</code> or <code>slice</code> based on what you want. Just be careful as documented in <a href="https://github.com/grpc/grpc-go/blob/master/Documentation/concurrency.md#streams">Streams</a>:</p>
 <blockquote>
 <p>When using streams, one must take care to avoid calling either <code>SendMsg</code> or <code>RecvMsg</code> multiple times against the same <a href="https://godoc.org/google.golang.org/grpc#Stream">Stream</a> from different goroutines. In other words, it&rsquo;s safe to have a goroutine calling <code>SendMsg</code> and another goroutine calling <code>RecvMsg</code> on the same stream at the same time. But it is not safe to call <code>SendMsg</code> on the same stream in different goroutines, or to call <code>RecvMsg</code> on the same stream in different goroutines.</p>
@@ -307,17 +309,17 @@ rft.Range(func(fd protoreflect.FieldDescriptor, fv protoreflect.Value) bool {
 </blockquote>
 <p>Thus comes the third approch.</p>
 <ol start="3">
-<li>An Intermidiate Channel</li>
+<li>An intermediate Channel</li>
 </ol>
-<p>We can have an intermidiate goroutine which have the ownership of the <code>map</code> structure, by ownership I mean only this goroutine can modify the <code>map</code> structure. Message will be send to a intermidiate channel <code>Broadcast</code>, and the <code>Broadcast</code> will modify the <code>map</code> structure, or send message to <code>channel</code> according to the <code>map</code> structure. The <code>Broadcast</code> have the ownership of the <code>map</code> structure, and the data flows in a single direction.</p>
+<p>We can have an intere3diate goroutine which have the ownership of the <code>map</code> structure, by ownership I mean only this goroutine can modify the <code>map</code> structure. Message will be send to a intermediate channel <code>Broadcast</code>, and the <code>Broadcast</code> will modify the <code>map</code> structure, or send message to <code>channel</code> according to the <code>map</code> structure. The <code>Broadcast</code> have the ownership of the <code>map</code> structure, and the data flows in a single direction.</p>
 <p>Some code you can work with:</p>
 <pre><code>func (s *server) Subscribe(req *pb.SubscribeRequest, srv pb.SubscribeServer) error {
 	//get trace id or generated a random string or whatever you want to indicate this goroutine
 	ID:=&quot;randomString&quot;
 	//create a chan to receive response message
 	conn := make(chan *pb.SubscribeResponse)
-	//an intermidiate channel which incharge of the `map`
-	s.broadcast&lt;-&amp;broadcastPayload{
+	//an intermediate channel which incharge of the `map`
+	s.broadcast &lt;- &amp;broadcastPayload {
 		//an unique identifier
 		ID: ID
 		//the chan corresponse to the ID
@@ -329,20 +331,20 @@ rft.Range(func(fd protoreflect.FieldDescriptor, fv protoreflect.Value) bool {
 	for {
 		select {  
 			case &lt;-srv.Context().Done():  
-			   s.broadcast &lt;- &amp;entity.BroadcastPayload{  
+				s.broadcast &lt;- &amp;entity.BroadcastPayload{  
 					 ID: ID,
 					 Event: EventEnum.RemoveConnection
-			 }
-			 return nil  
+			}
+			return nil  
 			case response := &lt;-conn:  
-			   if status, ok := status.FromError(srv.Send(response)); ok {  
-				 switch status.Code() {  
-				 case codes.OK:  
-						 //noop  
-				 case codes.Unavailable, codes.Canceled, codes.DeadlineExceeded:  
-						 return nil  
-				 default:  
-						 return nil  
+				if status, ok := status.FromError(srv.Send(response)); ok {  
+				switch status.Code() {  
+				case codes.OK:  
+					//noop  
+				case codes.Unavailable, codes.Canceled, codes.DeadlineExceeded:  
+					return nil  
+				default:  
+					return nil  
 			 }  
 		 }}
 	}
@@ -375,7 +377,7 @@ for v:=range s.broadcast {
 </ol>
 <p>If you want to use a messaging system, like <code>kafka</code> or <code>NATS</code>, you just need to change the code in the intermediate <code>broadcast</code> channel, or you won&rsquo;t need to consider all the problems above.</p>
 <h2 id="continue">Continue<a href="#continue" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
-<p>A lot of topics havedn&rsquo;t been included, like grpc-web, testing, grpc-gateway, health check, profiling and so many things, I will continue with the 2nd post. Hope you like this one, if you have questions or suggestions, or how you solve the above problems, just submit a issue or PR, all is welcomed.</p>
+<p>A lot of topics havedn&rsquo;t been included, like grpc-web, testing, grpc-gateway, health check, profiling and so many things, I will continue with the 2nd post. Hope you like this one, if you have questions or suggestions, or how you solve the above problems, just submit a issue or PR <a href="https://github.com/washanhanzi/washanhanzi.github.io">here</a>, all is welcomed.</p>
 <h2 id="refs-no-particular-order">Refs (No particular order)<a href="#refs-no-particular-order" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <ul>
 <li><a href="https://blog.gopheracademy.com/advent-2017/go-grpc-beyond-basics/">gRPC Go: Beyond the basics</a></li>
@@ -391,7 +393,7 @@ for v:=range s.broadcast {
 
 			<hr class="post-end">
 			<footer class="post-info">
-				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>2681 Words</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>2683 Words</p>
 				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2021-05-30 08:00 &#43;0800</p>
 			</footer>
 		</article>

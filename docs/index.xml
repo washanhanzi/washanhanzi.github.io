@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Null</title>
+    <title>N1ll</title>
     <link>https://washanhanzi.github.io/</link>
-    <description>Recent content on Null</description>
+    <description>Recent content on N1ll</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-    <lastBuildDate>Sat, 04 Jan 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://washanhanzi.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 30 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://washanhanzi.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Into gRPC</title>
-      <link>https://washanhanzi.github.io/posts/intogrpc/</link>
-      <pubDate>Sat, 04 Jan 2020 00:00:00 +0000</pubDate>
+      <title>Pragmatic gRPC 1</title>
+      <link>https://washanhanzi.github.io/posts/pragmaticgrpc1/</link>
+      <pubDate>Sun, 30 May 2021 00:00:00 +0000</pubDate>
       
-      <guid>https://washanhanzi.github.io/posts/intogrpc/</guid>
-      <description>API Design Error Interceptor /Middleware </description>
+      <guid>https://washanhanzi.github.io/posts/pragmaticgrpc1/</guid>
+      <description>.proto file This Artical is fully based on version proto3 and golang. In .proto: The package field should contain version infomation, like HelloService.v1 The request and response message should name with a certain rule, generally it will be the the service rpc method name with a Request or Response suffix. Like: rpc HelloWorld(HelloWorldRequest) returns (HelloWorldResponse){} A good place to start is Goole API design guide. Just keep in mind, protocol</description>
     </item>
     
   </channel>
