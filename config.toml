@@ -96,3 +96,6 @@ DefaultContentLanguage = "en"
      url = "/zh"
      weight = 30
 
+[privacy]
+    [privacy.googleAnalytics]
+    anonymizeIP = true
