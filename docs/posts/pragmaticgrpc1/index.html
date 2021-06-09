@@ -22,7 +22,7 @@ if (!doNotTrack) {
 <meta itemprop="name" content="Pragmatic gRPC 1">
 <meta itemprop="description" content=".proto file This Artical is fully based on version proto3 and golang. In .proto: The package field should contain version infomation, like HelloService.v1 The request and response message should name with a certain rule, generally it will be the the service rpc method name with a Request or Response suffix. Like: rpc HelloWorld(HelloWorldRequest) returns (HelloWorldResponse){} A good place to start is Goole API design guide. Just keep in mind, protocol"><meta itemprop="datePublished" content="2021-05-30T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2021-05-30T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="2683">
+<meta itemprop="wordCount" content="2684">
 <meta itemprop="keywords" content="" /><meta property="og:title" content="Pragmatic gRPC 1" />
 <meta property="og:description" content=".proto file This Artical is fully based on version proto3 and golang. In .proto: The package field should contain version infomation, like HelloService.v1 The request and response message should name with a certain rule, generally it will be the the service rpc method name with a Request or Response suffix. Like: rpc HelloWorld(HelloWorldRequest) returns (HelloWorldResponse){} A good place to start is Goole API design guide. Just keep in mind, protocol" />
 <meta property="og:type" content="article" />
@@ -241,7 +241,7 @@ func (w *wrappedStream) Context() context.Context {
 //Remember the gRPC package is versioned? make sure update the gRPC package version won't break your authorization code 
 info.FullMethod
 </code></pre><p>But you will not have any information about what resources user requested. Then, you need to put that information in the metadata if you want to do the authorization in interceptor. Or you will put the request resouces in request message.</p>
-<p>I prefer the first approach, but carefully design your api, as data related to your bussiness logic in now in metadata and request message.</p>
+<p>I prefer the first approach, but carefully design your api, as data related to your bussiness logic is now in metadata and request message.</p>
 <h2 id="partial-update">Partial Update<a href="#partial-update" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <p>gRPC use a <code>google.protobuf.FieldMask</code> to describe <a href="https://cloud.google.com/apis/design/design_patterns#partial_response">partial update</a>.</p>
 <p>You can utilize reflect api in v2 to deal with the <code>FieldMask</code>:</p>
@@ -256,14 +256,14 @@ mask.Normalize()
 maskPaths:=mask.GetPaths()
 //get proto message reflection
 //or you can do the partial update by your own without reflection since fv.(type) is realy annoying
-//And the protocol buffer `[list](https://pkg.go.dev/google.golang.org/protobuf/reflect/protoreflect#List)` and `[map](https://pkg.go.dev/google.golang.org/protobuf/reflect/protoreflect#List)` type is not same as the go `array` or `map` type.
+//Notice the protocol buffer `[list](https://pkg.go.dev/google.golang.org/protobuf/reflect/protoreflect#List)` and `[map](https://pkg.go.dev/google.golang.org/protobuf/reflect/protoreflect#List)` type is not same as the go `array` or `map` type.
 rft:=request.ProtoReflect()
 rft.Range(func(fd protoreflect.FieldDescriptor, fv protoreflect.Value) bool {
 	//compare fd.JSONName() to the maskPaths value
 	//get corresponse field value with fv.(type)
 }
 </code></pre><h2 id="stream-with-broadcast">Stream with Broadcast<a href="#stream-with-broadcast" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
-<p>The most excitment part about gRPC of couse is its streaming ability. Though it&rsquo;s no easy feat to implement that for beginners of concurrency programming (like me). I hope I can ease your pain when implenting the gRPC streaming with broadcast like feature.</p>
+<p>The most excitment part about gRPC of couse is its streaming ability. Though it&rsquo;s no easy feat to implement that for beginners of concurrency programming (like me). I hope I can ease your pain when implenting the gRPC streaming with broadcast.</p>
 <p>The basic here are:</p>
 <ul>
 <li>Each handler runs in its own goroutine (each connection will have its own goroutine)</li>
@@ -289,7 +289,7 @@ rft.Range(func(fd protoreflect.FieldDescriptor, fv protoreflect.Value) bool {
 		srv.Send(response)
 	}
 }
-</code></pre><p>Below are some approaches I saw or think of:</p>
+</code></pre><p>Below are some approaches I saw or I can think of:</p>
 <ol>
 <li>Sharing <code>srv</code></li>
 </ol>
@@ -319,7 +319,7 @@ rft.Range(func(fd protoreflect.FieldDescriptor, fv protoreflect.Value) bool {
 <ol start="3">
 <li>An intermediate Channel</li>
 </ol>
-<p>We can have an intere3diate goroutine which have the ownership of the <code>map</code> structure, by ownership I mean only this goroutine can modify the <code>map</code> structure. Message will be send to a intermediate channel <code>Broadcast</code>, and the <code>Broadcast</code> will modify the <code>map</code> structure, or send message to <code>channel</code> according to the <code>map</code> structure. The <code>Broadcast</code> have the ownership of the <code>map</code> structure, and the data flows in a single direction.</p>
+<p>We can have an interemediate goroutine which have the ownership of the <code>map</code> structure, by ownership I mean only this goroutine can modify the <code>map</code> structure. Message will be send to a intermediate channel <code>Broadcast</code>, and the <code>Broadcast</code> will modify the <code>map</code> structure, or send message to <code>channel</code> according to the identifier. The <code>Broadcast</code> have the ownership of the <code>map</code> structure, and the data flows in a single direction.</p>
 <p>Some code you can work with:</p>
 <pre><code>func (s *server) Subscribe(req *pb.SubscribeRequest, srv pb.SubscribeServer) error {
 	//get trace id or generated a random string or whatever you want to indicate this goroutine
@@ -357,18 +357,20 @@ rft.Range(func(fd protoreflect.FieldDescriptor, fv protoreflect.Value) bool {
 		 }}
 	}
 }
-</code></pre><pre><code>//this goroutine has the ownership to modify the map[string]chan *pb.SubscribeResponse
-for v:=range s.broadcast {
-	//do something based on the event
-	switch v.Event {
-		//add the ID and conn to the map
-		case EventEnum.AddConnection:
-			...
-		case EventEnum.RemoveConnection:
-			...
-		//receive message from bussiness logic, send the message to suiteable conn in the map as you like
-		case EventEnum.ReceiveResponse:
-			...
+</code></pre><pre><code>//this goroutine has the ownership of the map[string]chan *pb.SubscribeResponse
+go func(){
+	for v:=range s.broadcast {
+		//do something based on the event
+		switch v.Event {
+			//add the ID and conn to the map
+			case EventEnum.AddConnection:
+				...
+			case EventEnum.RemoveConnection:
+				...
+			//receive message from bussiness logic, send the message to suiteable conn in the map as you like
+			case EventEnum.ReceiveResponse:
+				...
+		}
 	}
 }
 </code></pre><ol start="4">
@@ -401,7 +403,7 @@ for v:=range s.broadcast {
 
 			<hr class="post-end">
 			<footer class="post-info">
-				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>2683 Words</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>2684 Words</p>
 				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2021-05-30 08:00 &#43;0800</p>
 			</footer>
 		</article>

@@ -174,7 +174,7 @@ func (w *wrappedStream) Context() context.Context {
 //Remember the gRPC package is versioned? make sure update the gRPC package version won't break your authorization code 
 info.FullMethod
 </code></pre><p>But you will not have any information about what resources user requested. Then, you need to put that information in the metadata if you want to do the authorization in interceptor. Or you will put the request resouces in request message.</p>
-<p>I prefer the first approach, but carefully design your api, as data related to your bussiness logic in now in metadata and request message.</p>
+<p>I prefer the first approach, but carefully design your api, as data related to your bussiness logic is now in metadata and request message.</p>
 <h2 id="partial-update">Partial Update</h2>
 <p>gRPC use a <code>google.protobuf.FieldMask</code> to describe <a href="https://cloud.google.com/apis/design/design_patterns#partial_response">partial update</a>.</p>
 <p>You can utilize reflect api in v2 to deal with the <code>FieldMask</code>:</p>
@@ -189,14 +189,14 @@ mask.Normalize()
 maskPaths:=mask.GetPaths()
 //get proto message reflection
 //or you can do the partial update by your own without reflection since fv.(type) is realy annoying
-//And the protocol buffer `[list](https://pkg.go.dev/google.golang.org/protobuf/reflect/protoreflect#List)` and `[map](https://pkg.go.dev/google.golang.org/protobuf/reflect/protoreflect#List)` type is not same as the go `array` or `map` type.
+//Notice the protocol buffer `[list](https://pkg.go.dev/google.golang.org/protobuf/reflect/protoreflect#List)` and `[map](https://pkg.go.dev/google.golang.org/protobuf/reflect/protoreflect#List)` type is not same as the go `array` or `map` type.
 rft:=request.ProtoReflect()
 rft.Range(func(fd protoreflect.FieldDescriptor, fv protoreflect.Value) bool {
 	//compare fd.JSONName() to the maskPaths value
 	//get corresponse field value with fv.(type)
 }
 </code></pre><h2 id="stream-with-broadcast">Stream with Broadcast</h2>
-<p>The most excitment part about gRPC of couse is its streaming ability. Though it&rsquo;s no easy feat to implement that for beginners of concurrency programming (like me). I hope I can ease your pain when implenting the gRPC streaming with broadcast like feature.</p>
+<p>The most excitment part about gRPC of couse is its streaming ability. Though it&rsquo;s no easy feat to implement that for beginners of concurrency programming (like me). I hope I can ease your pain when implenting the gRPC streaming with broadcast.</p>
 <p>The basic here are:</p>
 <ul>
 <li>Each handler runs in its own goroutine (each connection will have its own goroutine)</li>
@@ -222,7 +222,7 @@ rft.Range(func(fd protoreflect.FieldDescriptor, fv protoreflect.Value) bool {
 		srv.Send(response)
 	}
 }
-</code></pre><p>Below are some approaches I saw or think of:</p>
+</code></pre><p>Below are some approaches I saw or I can think of:</p>
 <ol>
 <li>Sharing <code>srv</code></li>
 </ol>
@@ -252,7 +252,7 @@ rft.Range(func(fd protoreflect.FieldDescriptor, fv protoreflect.Value) bool {
 <ol start="3">
 <li>An intermediate Channel</li>
 </ol>
-<p>We can have an intere3diate goroutine which have the ownership of the <code>map</code> structure, by ownership I mean only this goroutine can modify the <code>map</code> structure. Message will be send to a intermediate channel <code>Broadcast</code>, and the <code>Broadcast</code> will modify the <code>map</code> structure, or send message to <code>channel</code> according to the <code>map</code> structure. The <code>Broadcast</code> have the ownership of the <code>map</code> structure, and the data flows in a single direction.</p>
+<p>We can have an interemediate goroutine which have the ownership of the <code>map</code> structure, by ownership I mean only this goroutine can modify the <code>map</code> structure. Message will be send to a intermediate channel <code>Broadcast</code>, and the <code>Broadcast</code> will modify the <code>map</code> structure, or send message to <code>channel</code> according to the identifier. The <code>Broadcast</code> have the ownership of the <code>map</code> structure, and the data flows in a single direction.</p>
 <p>Some code you can work with:</p>
 <pre><code>func (s *server) Subscribe(req *pb.SubscribeRequest, srv pb.SubscribeServer) error {
 	//get trace id or generated a random string or whatever you want to indicate this goroutine
@@ -290,18 +290,20 @@ rft.Range(func(fd protoreflect.FieldDescriptor, fv protoreflect.Value) bool {
 		 }}
 	}
 }
-</code></pre><pre><code>//this goroutine has the ownership to modify the map[string]chan *pb.SubscribeResponse
-for v:=range s.broadcast {
-	//do something based on the event
-	switch v.Event {
-		//add the ID and conn to the map
-		case EventEnum.AddConnection:
-			...
-		case EventEnum.RemoveConnection:
-			...
-		//receive message from bussiness logic, send the message to suiteable conn in the map as you like
-		case EventEnum.ReceiveResponse:
-			...
+</code></pre><pre><code>//this goroutine has the ownership of the map[string]chan *pb.SubscribeResponse
+go func(){
+	for v:=range s.broadcast {
+		//do something based on the event
+		switch v.Event {
+			//add the ID and conn to the map
+			case EventEnum.AddConnection:
+				...
+			case EventEnum.RemoveConnection:
+				...
+			//receive message from bussiness logic, send the message to suiteable conn in the map as you like
+			case EventEnum.ReceiveResponse:
+				...
+		}
 	}
 }
 </code></pre><ol start="4">

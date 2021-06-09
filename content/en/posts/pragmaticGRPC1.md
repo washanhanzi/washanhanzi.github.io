@@ -253,7 +253,7 @@ info.FullMethod
 
 But you will not have any information about what resources user requested. Then, you need to put that information in the metadata if you want to do the authorization in interceptor. Or you will put the request resouces in request message.
 
-I prefer the first approach, but carefully design your api, as data related to your bussiness logic in now in metadata and request message.
+I prefer the first approach, but carefully design your api, as data related to your bussiness logic is now in metadata and request message.
 
 ## Partial Update
 
@@ -273,7 +273,7 @@ mask.Normalize()
 maskPaths:=mask.GetPaths()
 //get proto message reflection
 //or you can do the partial update by your own without reflection since fv.(type) is realy annoying
-//And the protocol buffer `[list](https://pkg.go.dev/google.golang.org/protobuf/reflect/protoreflect#List)` and `[map](https://pkg.go.dev/google.golang.org/protobuf/reflect/protoreflect#List)` type is not same as the go `array` or `map` type.
+//Notice the protocol buffer `[list](https://pkg.go.dev/google.golang.org/protobuf/reflect/protoreflect#List)` and `[map](https://pkg.go.dev/google.golang.org/protobuf/reflect/protoreflect#List)` type is not same as the go `array` or `map` type.
 rft:=request.ProtoReflect()
 rft.Range(func(fd protoreflect.FieldDescriptor, fv protoreflect.Value) bool {
 	//compare fd.JSONName() to the maskPaths value
@@ -283,7 +283,7 @@ rft.Range(func(fd protoreflect.FieldDescriptor, fv protoreflect.Value) bool {
 
 ## Stream with Broadcast
 
-The most excitment part about gRPC of couse is its streaming ability. Though it's no easy feat to implement that for beginners of concurrency programming (like me). I hope I can ease your pain when implenting the gRPC streaming with broadcast like feature.
+The most excitment part about gRPC of couse is its streaming ability. Though it's no easy feat to implement that for beginners of concurrency programming (like me). I hope I can ease your pain when implenting the gRPC streaming with broadcast.
 
 The basic here are:
 
@@ -314,7 +314,7 @@ func (s *server) Subscribe(req *pb.SubscribeRequest, srv pb.SubscribeServer) err
 }
 ```
 
-Below are some approaches I saw or think of:
+Below are some approaches I saw or I can think of:
 
 1. Sharing `srv`
 
@@ -354,7 +354,7 @@ Thus comes the third approch.
 
 3. An intermediate Channel
 
-We can have an intere3diate goroutine which have the ownership of the `map` structure, by ownership I mean only this goroutine can modify the `map` structure. Message will be send to a intermediate channel `Broadcast`, and the `Broadcast` will modify the `map` structure, or send message to `channel` according to the `map` structure. The `Broadcast` have the ownership of the `map` structure, and the data flows in a single direction.
+We can have an interemediate goroutine which have the ownership of the `map` structure, by ownership I mean only this goroutine can modify the `map` structure. Message will be send to a intermediate channel `Broadcast`, and the `Broadcast` will modify the `map` structure, or send message to `channel` according to the identifier. The `Broadcast` have the ownership of the `map` structure, and the data flows in a single direction.
 
 Some code you can work with:
 
@@ -398,18 +398,20 @@ func (s *server) Subscribe(req *pb.SubscribeRequest, srv pb.SubscribeServer) err
 ```
 
 ```
-//this goroutine has the ownership to modify the map[string]chan *pb.SubscribeResponse
-for v:=range s.broadcast {
-	//do something based on the event
-	switch v.Event {
-		//add the ID and conn to the map
-		case EventEnum.AddConnection:
-			...
-		case EventEnum.RemoveConnection:
-			...
-		//receive message from bussiness logic, send the message to suiteable conn in the map as you like
-		case EventEnum.ReceiveResponse:
-			...
+//this goroutine has the ownership of the map[string]chan *pb.SubscribeResponse
+go func(){
+	for v:=range s.broadcast {
+		//do something based on the event
+		switch v.Event {
+			//add the ID and conn to the map
+			case EventEnum.AddConnection:
+				...
+			case EventEnum.RemoveConnection:
+				...
+			//receive message from bussiness logic, send the message to suiteable conn in the map as you like
+			case EventEnum.ReceiveResponse:
+				...
+		}
 	}
 }
 ```
