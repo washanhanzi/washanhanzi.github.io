@@ -14,7 +14,7 @@
       <pubDate>Sun, 30 May 2021 00:00:00 +0000</pubDate>
       
       <guid>https://washanhanzi.github.io/posts/pragmaticgrpc1/</guid>
-      <description>.proto file This Artical is fully based on version proto3 and golang. In .proto: The package field should contain version infomation, like HelloService.v1 The request and response message should name with a certain rule, generally it will be the the service rpc method name with a Request or Response suffix. Like: rpc HelloWorld(HelloWorldRequest) returns (HelloWorldResponse){} A good place to start is Goole API design guide. Just keep in mind, protocol</description>
+      <description>This artical is fully based on proto3 and golang. .proto file In .proto: The package field should contain version infomation, like HelloService.v1 The request and response message should name with a certain rule, generally it will be the the service rpc method name with a Request or Response suffix. Like: rpc HelloWorld(HelloWorldRequest) returns (HelloWorldResponse){} For API design, a good place to start is Goole API design guide. Just keep in</description>
     </item>
     
   </channel>

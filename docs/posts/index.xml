@@ -15,18 +15,18 @@
 			<pubDate>Sun, 30 May 2021 00:00:00 +0000</pubDate>
 			
 			<guid>https://washanhanzi.github.io/posts/pragmaticgrpc1/</guid>
-			<description>.proto file This Artical is fully based on version proto3 and golang. In .proto: The package field should contain version infomation, like HelloService.v1 The request and response message should name with a certain rule, generally it will be the the service rpc method name with a Request or Response suffix. Like: rpc HelloWorld(HelloWorldRequest) returns (HelloWorldResponse){} A good place to start is Goole API design guide. Just keep in mind, protocol</description>
-			<content type="html"><![CDATA[<h2 id="proto-file"><code>.proto</code> file</h2>
-<blockquote>
-<p>This Artical is fully based on version proto3 and <code>golang</code>.</p>
+			<description>This artical is fully based on proto3 and golang. .proto file In .proto: The package field should contain version infomation, like HelloService.v1 The request and response message should name with a certain rule, generally it will be the the service rpc method name with a Request or Response suffix. Like: rpc HelloWorld(HelloWorldRequest) returns (HelloWorldResponse){} For API design, a good place to start is Goole API design guide. Just keep in</description>
+			<content type="html"><![CDATA[<blockquote>
+<p>This artical is fully based on proto3 and <code>golang</code>.</p>
 </blockquote>
+<h2 id="proto-file"><code>.proto</code> file</h2>
 <p>In <code>.proto</code>:</p>
 <ul>
 <li>The <code>package</code> field should contain version infomation, like <code>HelloService.v1</code></li>
 <li>The request and response message should name with a certain rule, generally it will be the the service rpc method name with a <code>Request</code> or <code>Response</code> suffix. Like:</li>
 </ul>
 <pre><code>rpc HelloWorld(HelloWorldRequest) returns (HelloWorldResponse){}
-</code></pre><p>A good place to start is <a href="https://cloud.google.com/apis/design">Goole API design guide</a>.</p>
+</code></pre><p>For API design, a good place to start is <a href="https://cloud.google.com/apis/design">Goole API design guide</a>.</p>
 <p>Just keep in mind, protocol buffer language, like <code>go</code>, always have a default value, it can&rsquo;t differentiating unset value from default value. It&rsquo;s best to have a default value indicate unset value. As an example, always keep <code>0</code> as the unkown or unset value for <code>enum</code> (you should do it in <code>go</code> either, always start from <code>iota+1</code>):</p>
 <pre><code>enum Hello { 
 	UNKNOWN = 0;
@@ -51,9 +51,9 @@
 <p>If you want to start a new project with gRPC, I suggest start with v2 api. Then you have 2 choices to cast your <code>struct</code> type to the generated type.</p>
 <ol>
 <li>Serillize and desrillize. Make sure you use the right library: <code>google.golang.org/protobuf/encoding/protojson</code>.</li>
-<li>Write some boilerplate code by your own. (or maybe you want do it with code generation?)</li>
+<li>Write some boilerplate code by your own. (or maybe you prefer code generation?)</li>
 </ol>
-<p>The only thing to consider I think is performance, just benchmark with your own proto message you will come to a conclusion. Generally, I prefer the second one.</p>
+<p>The only thing to consider I think is performance, just benchmark with your own proto message you will come to a conclusion. Generally, I prefer the second one (with or without code generation).</p>
 <h3 id="code-generation">code generation</h3>
 <p>With the newly v2 api, here is an example how to generate go code from <code>.proto</code> file.</p>
 <pre><code>protoc -I=proto --go\_out\=module\=github.com/hello/hello:. \  
@@ -67,9 +67,9 @@
 <pre><code>status.Error(codes.Internal, &quot;your request failed&quot;)
 </code></pre><p>You can check the gRPC error type with:</p>
 <pre><code>if se, ok := err.(interface {  
- GRPCStatus() \*status.Status  
-}); ok {  
- return se.GRPCStatus().Err()  
+    	GRPCStatus() *status.Status  
+    }); ok {  
+    return se.GRPCStatus().Err()  
 }
 </code></pre><p>You can read more about the gRPC error code and examplanation <a href="https://pkg.go.dev/google.golang.org/grpc/codes">here</a>.</p>
 <p>For all the error codes, your application should only consider return these:</p>
@@ -82,7 +82,7 @@ Aborted [Code](https://pkg.go.dev/google.golang.org/grpc/codes#Code) = 10
 OutOfRange [Code](https://pkg.go.dev/google.golang.org/grpc/codes#Code) = 11
 DataLoss [Code](https://pkg.go.dev/google.golang.org/grpc/codes#Code) = 15
 Unauthenticated [Code](https://pkg.go.dev/google.golang.org/grpc/codes#Code) = 16
-</code></pre><p>If you want dig more into the gRPC error, I suggest to watch this <a href="https://www.youtube.com/watch?v=g44zR3cyC-I&amp;t=512s">vedio</a>.</p>
+</code></pre><p>If you want to dig more into the gRPC error, I suggest to watch this <a href="https://www.youtube.com/watch?v=g44zR3cyC-I&amp;t=512s">vedio</a>.</p>
 <h2 id="deadline">Deadline</h2>
 <p>It&rsquo;s best practice to use deadlines.</p>
 <p>You can check whether client set a deadline:</p>
@@ -99,17 +99,17 @@ if timeout &lt; 5*time.Second || timeout &gt; 30*time.Second {
 <p>You can check for more about deadline propagation in this <a href="https://www.youtube.com/watch?v=Z_yD7YPL2oE&amp;list=FL_F0hJOcLaFNDptQDkcoSQA&amp;index=3">vedio</a> (and other best practices).</p>
 <h2 id="interceptor-and-metadata">Interceptor and Metadata</h2>
 <p>Interceptor is like the <code>middleware</code> in <code>REST</code> framework. You can get all you need from <a href="https://github.com/grpc-ecosystem/go-grpc-middleware">this repo</a>. The interceptor chain just works like middleware chain in <code>REST</code> framework.</p>
-<p>Almost in every <code>REST</code> framework, you can define a specific middleware for a specific controller or endpoint.  Unfortuanately, I haven&rsquo;t found an easy way to do this in <code>gRPC</code>, you can only write interceptor for the whole server, after that, you can filter your routes in interceptor, or you can put the code directly in the <code>controller</code>.</p>
-<p>Metadata is the HTTP/2 version of http headers. Since gRPC uses HTTP/2, gRPC also use metadata. You can find a detailed explanation <a href="https://github.com/grpc/grpc-go/blob/master/Documentation/grpc-metadata.md">here</a>.</p>
+<p>Almost in every <code>REST</code> framework, you can define a specific middleware for a specific controller or endpoint. Unfortuanately, I haven&rsquo;t found an easy way to do this in <code>gRPC</code>, you can only write interceptor for the whole server, after that, you can filter your routes in interceptor, or you can put the code directly in the <code>controller</code>.</p>
+<p>HTTP/2 version of http headers is <code>metadata</code>, which used in gRPC. You can find a detailed explanation <a href="https://github.com/grpc/grpc-go/blob/master/Documentation/grpc-metadata.md">here</a>.</p>
 <p>A lot of things can be done with interceptor using metadata and context, like authentication and authorization.</p>
 <p>To read metadata is easy:</p>
 <pre><code>md, ok := metadata.FromIncomingContext(ctx)  
 if !ok {  
- //return some error
+    //return some error
 }
 </code></pre><p><code>md</code> is of type <code>metadata.MD</code> which is <code>map[string][]string</code>. For example, to get the trace id:</p>
 <pre><code>IDs, ok := md[&quot;x-b3-traceid&quot;]
-</code></pre><p>This solved part of our problem, to read data from request. If you want to pass some data to other interceptor or <code>controller</code>, you can use <code>context</code>.</p>
+</code></pre><p>This solved only part of our problem. If you want to pass some data to other interceptor or <code>controller</code>, you can use <code>context</code>.</p>
 <pre><code>type key int  
   
 //payloadKey is unexported, to prevent collisions with keys defined in other packages
@@ -117,12 +117,12 @@ var payloadKey key
 
 //Payload is a custom struct contain the data you want to pass on
 type Payload struct {  
- ID string  
+    ID string  
 }
-</code></pre><p>First, we need an unexported type <code>payloadKey</code> as an unique identifier, which won&rsquo;t be overwrite by other code or packages like an ordinary metadata name.</p>
+</code></pre><p>First, we need an unexported type <code>payloadKey</code> as an unique identifier, which won&rsquo;t be overwrite by other code or packages like the <code>REST</code> header name.</p>
 <pre><code>//newContext will create a new go `context` with the payload
 func newContext(ctx context.Context, payload *Payload) context.Context {  
- return context.WithValue(ctx, payloadKey, payload)  
+    return context.WithValue(ctx, payloadKey, payload)  
 }
 </code></pre><pre><code>//FromContext can be used in all controllers to get the payload from `context`
 func FromContext(ctx context.Context) (*Payload, bool) {  
@@ -158,10 +158,10 @@ func newWrappedStream(ss grpc.ServerStream, payload *Payload) *wrappedStream {
 
 //Context() will return our context with payload
 func (w *wrappedStream) Context() context.Context {  
- return context.WithValue(w.parentCtx, payloadKey, w.payload)  
+    return context.WithValue(w.parentCtx, payloadKey, w.payload)  
 }
 
-</code></pre><p>In this way, we utilize go&rsquo;s composition power, you don&rsquo;t need to modify any existing code.</p>
+</code></pre><p>In this way, you don&rsquo;t need to modify any existing code.</p>
 <pre><code>func StreamInterceptor() grpc.StreamServerInterceptor {  
 	return func(srv interface{}, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
 	//some code
@@ -169,11 +169,11 @@ func (w *wrappedStream) Context() context.Context {
 	return handler(srv,newWrappedStream(ss, &amp;payload))
 }
 </code></pre><p>With all the above, you can easily implement your own authentication and authorization logic.</p>
-<p>But there is a problem, in <code>REST</code>, the request headers, url and method generally contain all the information you need for authorization, the <code>authorization</code> header will contain information about the user identity, the url will tell you which resource user requested, and the method is the user action. In gRPC, you still get the <code>authorization</code> metadata, you can get user action from:</p>
+<p>But there is a problem, in <code>REST</code>, the request headers, url and method generally contain all the information you need for authorization, the <code>authorization</code> header will contain information about the user identity, the url will tell you which resource user requested, and the method is the user action. In gRPC, you still get the <code>authorization</code> metadata, and you can get user action from:</p>
 <pre><code>//The FullMethod will return a string contain gRPC package, service, rpc method
 //Remember the gRPC package is versioned? make sure update the gRPC package version won't break your authorization code 
 info.FullMethod
-</code></pre><p>But you will not have any information about what resources user requested. Then, you need to put that information in the metadata if you want to do the authorization in interceptor. Or you will put the request resouces in request message.</p>
+</code></pre><p>But you will not have any information about what resources user requested. Then, you need to put that information in the metadata if you want to do the authorization in interceptor. Or you can include the request resouces in request message.</p>
 <p>I prefer the first approach, but carefully design your api, as data related to your bussiness logic is now in metadata and request message.</p>
 <h2 id="partial-update">Partial Update</h2>
 <p>gRPC use a <code>google.protobuf.FieldMask</code> to describe <a href="https://cloud.google.com/apis/design/design_patterns#partial_response">partial update</a>.</p>

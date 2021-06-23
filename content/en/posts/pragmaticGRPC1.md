@@ -4,9 +4,9 @@ date: 2021-05-30
 draft: false
 ---
 
-## `.proto` file
+> This artical is fully based on proto3 and `golang`.
 
-> This Artical is fully based on version proto3 and `golang`.
+## `.proto` file
 
 In `.proto`:
 
@@ -17,7 +17,7 @@ In `.proto`:
 rpc HelloWorld(HelloWorldRequest) returns (HelloWorldResponse){}
 ```
 
-A good place to start is [Goole API design guide](https://cloud.google.com/apis/design).
+For API design, a good place to start is [Goole API design guide](https://cloud.google.com/apis/design).
 
 Just keep in mind, protocol buffer language, like `go`, always have a default value, it can't differentiating unset value from default value. It's best to have a default value indicate unset value. As an example, always keep `0` as the unkown or unset value for `enum` (you should do it in `go` either, always start from `iota+1`):
 
@@ -57,9 +57,9 @@ Go have two version of protocol buffer libriry, [v1](https://pkg.go.dev/github.c
 If you want to start a new project with gRPC, I suggest start with v2 api. Then you have 2 choices to cast your `struct` type to the generated type.
 
 1. Serillize and desrillize. Make sure you use the right library: `google.golang.org/protobuf/encoding/protojson`. 
-2. Write some boilerplate code by your own. (or maybe you want do it with code generation?)
+2. Write some boilerplate code by your own. (or maybe you prefer code generation?)
 
-The only thing to consider I think is performance, just benchmark with your own proto message you will come to a conclusion. Generally, I prefer the second one.
+The only thing to consider I think is performance, just benchmark with your own proto message you will come to a conclusion. Generally, I prefer the second one (with or without code generation).
 
 ### code generation
 
@@ -88,9 +88,9 @@ You can check the gRPC error type with:
 
 ```
 if se, ok := err.(interface {  
- GRPCStatus() \*status.Status  
-}); ok {  
- return se.GRPCStatus().Err()  
+    	GRPCStatus() *status.Status  
+    }); ok {  
+    return se.GRPCStatus().Err()  
 }
 ```
 
@@ -110,7 +110,7 @@ DataLoss [Code](https://pkg.go.dev/google.golang.org/grpc/codes#Code) = 15
 Unauthenticated [Code](https://pkg.go.dev/google.golang.org/grpc/codes#Code) = 16
 ```
 
-If you want dig more into the gRPC error, I suggest to watch this [vedio](https://www.youtube.com/watch?v=g44zR3cyC-I&t=512s).
+If you want to dig more into the gRPC error, I suggest to watch this [vedio](https://www.youtube.com/watch?v=g44zR3cyC-I&t=512s).
 
 ## Deadline
 
@@ -138,9 +138,9 @@ You can check for more about deadline propagation in this [vedio](https://www.yo
 
 Interceptor is like the `middleware` in `REST` framework. You can get all you need from [this repo](https://github.com/grpc-ecosystem/go-grpc-middleware). The interceptor chain just works like middleware chain in `REST` framework.
 
-Almost in every `REST` framework, you can define a specific middleware for a specific controller or endpoint.  Unfortuanately, I haven't found an easy way to do this in `gRPC`, you can only write interceptor for the whole server, after that, you can filter your routes in interceptor, or you can put the code directly in the `controller`.
+Almost in every `REST` framework, you can define a specific middleware for a specific controller or endpoint. Unfortuanately, I haven't found an easy way to do this in `gRPC`, you can only write interceptor for the whole server, after that, you can filter your routes in interceptor, or you can put the code directly in the `controller`.
 
-Metadata is the HTTP/2 version of http headers. Since gRPC uses HTTP/2, gRPC also use metadata. You can find a detailed explanation [here](https://github.com/grpc/grpc-go/blob/master/Documentation/grpc-metadata.md).
+HTTP/2 version of http headers is `metadata`, which used in gRPC. You can find a detailed explanation [here](https://github.com/grpc/grpc-go/blob/master/Documentation/grpc-metadata.md).
 
 A lot of things can be done with interceptor using metadata and context, like authentication and authorization.
 
@@ -149,7 +149,7 @@ To read metadata is easy:
 ```
 md, ok := metadata.FromIncomingContext(ctx)  
 if !ok {  
- //return some error
+    //return some error
 }
 ```
 
@@ -159,7 +159,7 @@ if !ok {
 IDs, ok := md["x-b3-traceid"]
 ```
 
-This solved part of our problem, to read data from request. If you want to pass some data to other interceptor or `controller`, you can use `context`.
+This solved only part of our problem. If you want to pass some data to other interceptor or `controller`, you can use `context`.
 
 ```
 type key int  
@@ -169,16 +169,16 @@ var payloadKey key
 
 //Payload is a custom struct contain the data you want to pass on
 type Payload struct {  
- ID string  
+    ID string  
 }
 ```
 
-First, we need an unexported type `payloadKey` as an unique identifier, which won't be overwrite by other code or packages like an ordinary metadata name.
+First, we need an unexported type `payloadKey` as an unique identifier, which won't be overwrite by other code or packages like the `REST` header name.
 
 ```
 //newContext will create a new go `context` with the payload
 func newContext(ctx context.Context, payload *Payload) context.Context {  
- return context.WithValue(ctx, payloadKey, payload)  
+    return context.WithValue(ctx, payloadKey, payload)  
 }
 ```
 
@@ -225,12 +225,12 @@ func newWrappedStream(ss grpc.ServerStream, payload *Payload) *wrappedStream {
 
 //Context() will return our context with payload
 func (w *wrappedStream) Context() context.Context {  
- return context.WithValue(w.parentCtx, payloadKey, w.payload)  
+    return context.WithValue(w.parentCtx, payloadKey, w.payload)  
 }
 
 ```
 
-In this way, we utilize go's composition power, you don't need to modify any existing code.
+In this way, you don't need to modify any existing code.
 
 ```
 func StreamInterceptor() grpc.StreamServerInterceptor {  
@@ -243,7 +243,7 @@ func StreamInterceptor() grpc.StreamServerInterceptor {
 
 With all the above, you can easily implement your own authentication and authorization logic.
 
-But there is a problem, in `REST`, the request headers, url and method generally contain all the information you need for authorization, the `authorization` header will contain information about the user identity, the url will tell you which resource user requested, and the method is the user action. In gRPC, you still get the `authorization` metadata, you can get user action from:
+But there is a problem, in `REST`, the request headers, url and method generally contain all the information you need for authorization, the `authorization` header will contain information about the user identity, the url will tell you which resource user requested, and the method is the user action. In gRPC, you still get the `authorization` metadata, and you can get user action from:
 
 ```
 //The FullMethod will return a string contain gRPC package, service, rpc method
@@ -251,7 +251,7 @@ But there is a problem, in `REST`, the request headers, url and method generally
 info.FullMethod
 ```
 
-But you will not have any information about what resources user requested. Then, you need to put that information in the metadata if you want to do the authorization in interceptor. Or you will put the request resouces in request message.
+But you will not have any information about what resources user requested. Then, you need to put that information in the metadata if you want to do the authorization in interceptor. Or you can include the request resouces in request message.
 
 I prefer the first approach, but carefully design your api, as data related to your bussiness logic is now in metadata and request message.
 
