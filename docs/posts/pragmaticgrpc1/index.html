@@ -2,17 +2,29 @@
 <html lang="en-us">
 
 <head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-FSZE01YQC3"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-FSZE01YQC3', { 'anonymize_ip': true });
+}
+</script>
+
+
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<meta name="theme-color" content="#494f5c">
 	<meta name="msapplication-TileColor" content="#494f5c">
 <meta itemprop="name" content="Pragmatic gRPC 1">
-<meta itemprop="description" content="This artical is fully based on proto3 and golang. .proto file In .proto: The package field should contain version infomation, like HelloService.v1 The request and response message should name with a certain rule, generally it will be the the service rpc method name with a Request or Response suffix. Like: rpc HelloWorld(HelloWorldRequest) returns (HelloWorldResponse){} For API design, a good place to start is Goole API design guide. Just keep in"><meta itemprop="datePublished" content="2021-05-30T00:00:00&#43;00:00" />
+<meta itemprop="description" content="This artical is fully based on proto3 and golang. .proto file In .proto: The package field should contain version infomation, like HelloService.v1 The request and response message should name with a certain rule, generally it will be the the service rpc method name with a Request or Response suffix. Like: rpc HelloWorld(HelloWorldRequest) returns (HelloWorldResponse){} A good place to start is Goole API design guide. Just keep in mind, protocol buffer"><meta itemprop="datePublished" content="2021-05-30T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2021-05-30T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="2689">
+<meta itemprop="wordCount" content="2688">
 <meta itemprop="keywords" content="" /><meta property="og:title" content="Pragmatic gRPC 1" />
-<meta property="og:description" content="This artical is fully based on proto3 and golang. .proto file In .proto: The package field should contain version infomation, like HelloService.v1 The request and response message should name with a certain rule, generally it will be the the service rpc method name with a Request or Response suffix. Like: rpc HelloWorld(HelloWorldRequest) returns (HelloWorldResponse){} For API design, a good place to start is Goole API design guide. Just keep in" />
+<meta property="og:description" content="This artical is fully based on proto3 and golang. .proto file In .proto: The package field should contain version infomation, like HelloService.v1 The request and response message should name with a certain rule, generally it will be the the service rpc method name with a Request or Response suffix. Like: rpc HelloWorld(HelloWorldRequest) returns (HelloWorldResponse){} A good place to start is Goole API design guide. Just keep in mind, protocol buffer" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://washanhanzi.github.io/posts/pragmaticgrpc1/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2021-05-30T00:00:00&#43;00:00" />
@@ -20,7 +32,7 @@
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Pragmatic gRPC 1"/>
-<meta name="twitter:description" content="This artical is fully based on proto3 and golang. .proto file In .proto: The package field should contain version infomation, like HelloService.v1 The request and response message should name with a certain rule, generally it will be the the service rpc method name with a Request or Response suffix. Like: rpc HelloWorld(HelloWorldRequest) returns (HelloWorldResponse){} For API design, a good place to start is Goole API design guide. Just keep in"/>
+<meta name="twitter:description" content="This artical is fully based on proto3 and golang. .proto file In .proto: The package field should contain version infomation, like HelloService.v1 The request and response message should name with a certain rule, generally it will be the the service rpc method name with a Request or Response suffix. Like: rpc HelloWorld(HelloWorldRequest) returns (HelloWorldResponse){} A good place to start is Goole API design guide. Just keep in mind, protocol buffer"/>
 
 	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -511,7 +523,7 @@ protobuf，那v2呢？</a></li>
 
 			<hr class="post-end">
 			<footer class="post-info">
-				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>2689 Words</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>2688 Words</p>
 				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2021-05-30 08:00 &#43;0800</p>
 			</footer>
 		</article>
@@ -532,18 +544,6 @@ protobuf，那v2呢？</a></li>
 
 	<script src="https://washanhanzi.github.io/js/bundle.min.7d8545daa55d62427355498dd8da13f98ff79a7938ce7d2a5e2ae1ec0de3beb8.js" integrity="sha256-fYVF2qVdYkJzVUmN2NoT+Y/3mnk4zn0qXirh7A3jvrg=" crossorigin="anonymous"></script>
 	
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'G-FSZE01YQC3', 'auto');
-	ga('set', 'anonymizeIp', true);
-	ga('send', 'pageview');
-}
-</script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
-
-
 </body>
 
 </html>
