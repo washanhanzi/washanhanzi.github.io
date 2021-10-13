@@ -10,16 +10,23 @@ draft: false
 
 In `.proto`:
 
--  The `package` field should contain version infomation, like `HelloService.v1`
--  The request and response message should name with a certain rule, generally it will be the the service rpc method name with a `Request` or `Response` suffix. Like:
+- The `package` field should contain version infomation, like `HelloService.v1`
+- The request and response message should name with a certain rule, generally it
+  will be the the service rpc method name with a `Request` or `Response` suffix.
+  Like:
 
 ```
 rpc HelloWorld(HelloWorldRequest) returns (HelloWorldResponse){}
 ```
 
-For API design, a good place to start is [Goole API design guide](https://cloud.google.com/apis/design).
+A good place to start is
+[Goole API design guide](https://cloud.google.com/apis/design).
 
-Just keep in mind, protocol buffer language, like `go`, always have a default value, it can't differentiating unset value from default value. It's best to have a default value indicate unset value. As an example, always keep `0` as the unkown or unset value for `enum` (you should do it in `go` either, always start from `iota+1`):
+Just keep in mind, protocol buffer language, like `go`, always have a default
+value, it can't differentiating unset value from default value. It's best to
+have a default value indicate unset value. As an example, always keep `0` as the
+unkown or unset value for `enum` (you should do it in `go` either, always start
+from `iota+1`):
 
 ```
 enum Hello { 
@@ -29,41 +36,65 @@ enum Hello { 
 }
 ```
 
-
 ### Struct first or Proto first?
 
 1. Struct first
 
-There are some packages will generate `proto` definition from your `struct` type. Personaly I didn't try them out. The benifit of this approch is appealing, especially you use a ORM like `gorm`. The `struct` will generate all the things you need, and it become your only source of truth.
+There are some packages will generate `proto` definition from your `struct`
+type. Personaly I didn't try them out. The benifit of this approch is appealing,
+especially you use a ORM like `gorm`. The `struct` will generate all the things
+you need, and it become your only source of truth.
 
-I think this approach is poorly [supported](https://stackoverflow.com/questions/57064482/how-to-cast-convert-a-struct-to-protobuf). Generally, I preper to write `.proto` file first, it's really easy to use `.proto` file to work with the front end or other back end service team to finalize the  API.
+I think this approach is poorly
+[supported](https://stackoverflow.com/questions/57064482/how-to-cast-convert-a-struct-to-protobuf).
+Generally, I preper to write `.proto` file first, it's really easy to use
+`.proto` file to work with the front end or other back end service team to
+finalize the API.
 
 2. Proto first
 
-With all the code generated from your `.proto` file, there is a tendency to think `.proto` file as your source of truth. Don't. The `.proto` file mostly belong to the `controller`, it shouldn't coupled with your bussiness logic or database interactions.
+With all the code generated from your `.proto` file, there is a tendency to
+think `.proto` file as your source of truth. Don't. The `.proto` file mostly
+belong to the `controller`, it shouldn't coupled with your bussiness logic or
+database interactions.
 
-The problem is you can't easily cast your `struct` type to `.proto` generated `struct` type (the `proto.Message` type). The generated type have some addional fields. An easy solution is to use the `gogofaster` binary of [gogoprotobuf](https://github.com/gogo/protobuf), like:
+The problem is you can't easily cast your `struct` type to `.proto` generated
+`struct` type (the `proto.Message` type). The generated type have some addional
+fields. An easy solution is to use the `gogofaster` binary of
+[gogoprotobuf](https://github.com/gogo/protobuf), like:
 
 ```
 protoc --proto_path proto  --gogofaster_out="plugins=grpc:." ./proto/*.proto
 ```
 
-This package provides lots of extentions to custimize the `[golang/protobuf](https://github.com/golang/protobuf)`. Like the support of golang data type and marshaller function.
+This package provides lots of extentions to custimize the
+`[golang/protobuf](https://github.com/golang/protobuf)`. Like the support of
+golang data type and marshaller function.
 
-The problem is the helpful library now is [looing for new ownership](https://github.com/gogo/protobuf/issues/691), and it didn't support the new version of go protocol buffer api.
+The problem is the helpful library now is
+[looing for new ownership](https://github.com/gogo/protobuf/issues/691), and it
+didn't support the new version of go protocol buffer api.
 
-Go have two version of protocol buffer libriry, [v1](https://pkg.go.dev/github.com/golang/protobuf) and [v2](https://pkg.go.dev/google.golang.org/protobuf). The newer version have many improvements like the [reflection api](https://blog.golang.org/protobuf-apiv2).
+Go have two version of protocol buffer libriry,
+[v1](https://pkg.go.dev/github.com/golang/protobuf) and
+[v2](https://pkg.go.dev/google.golang.org/protobuf). The newer version have many
+improvements like the [reflection api](https://blog.golang.org/protobuf-apiv2).
 
-If you want to start a new project with gRPC, I suggest start with v2 api. Then you have 2 choices to cast your `struct` type to the generated type.
+If you want to start a new project with gRPC, I suggest start with v2 api. Then
+you have 2 choices to cast your `struct` type to the generated type.
 
-1. Serillize and desrillize. Make sure you use the right library: `google.golang.org/protobuf/encoding/protojson`. 
-2. Write some boilerplate code by your own. (or maybe you prefer code generation?)
+1. Serillize and desrillize. Make sure you use the right library:
+   `google.golang.org/protobuf/encoding/protojson`.
+2. Write some boilerplate code by your own. (or maybe you want do it with code
+   generation?)
 
-The only thing to consider I think is performance, just benchmark with your own proto message you will come to a conclusion. Generally, I prefer the second one (with or without code generation).
+The only thing to consider I think is performance, just benchmark with your own
+proto message you will come to a conclusion. Generally, I prefer the second one.
 
 ### code generation
 
-With the newly v2 api, here is an example how to generate go code from `.proto` file.
+With the newly v2 api, here is an example how to generate go code from `.proto`
+file.
 
 ```
 protoc -I=proto --go\_out\=module\=github.com/hello/hello:. \  
@@ -71,14 +102,19 @@ protoc -I=proto --go\_out\=module\=github.com/hello/hello:. \
 ./proto/\*.proto
 ```
 
-In every `.proto` file, add a line to specify the [go module](https://github.com/protocolbuffers/protobuf-go/releases#v1.21-generator):
+In every `.proto` file, add a line to specify the
+[go module](https://github.com/protocolbuffers/protobuf-go/releases#v1.21-generator):
 `option go\_package \= "github.com/hello/hello/yourModule/pb";`
 
-And the generated code will be put into the `pb` folder under every specific module.
+And the generated code will be put into the `pb` folder under every specific
+module.
 
 ## Error
 
-In gRPC, you don't need to include the error information in every response like in `restful api`.  Error in gRPC can contain the error code and error message itself. If you got a response with code `ok`, then it indicate the request is `successful(?)`. To construct an gRPC error is really simple:
+In gRPC, you don't need to include the error information in every response like
+in `restful api`. Error in gRPC can contain the error code and error message
+itself. If you got a response with code `ok`, then it indicate the request is
+`successful(?)`. To construct an gRPC error is really simple:
 
 ```
 status.Error(codes.Internal, "your request failed")
@@ -94,7 +130,8 @@ if se, ok := err.(interface {
 }
 ```
 
-You can read more about the gRPC error code and examplanation [here](https://pkg.go.dev/google.golang.org/grpc/codes).
+You can read more about the gRPC error code and examplanation
+[here](https://pkg.go.dev/google.golang.org/grpc/codes).
 
 For all the error codes, your application should only consider return these:
 
@@ -110,7 +147,8 @@ DataLoss [Code](https://pkg.go.dev/google.golang.org/grpc/codes#Code) = 15
 Unauthenticated [Code](https://pkg.go.dev/google.golang.org/grpc/codes#Code) = 16
 ```
 
-If you want to dig more into the gRPC error, I suggest to watch this [vedio](https://www.youtube.com/watch?v=g44zR3cyC-I&t=512s).
+If you want dig more into the gRPC error, I suggest to watch this
+[vedio](https://www.youtube.com/watch?v=g44zR3cyC-I&t=512s).
 
 ## Deadline
 
@@ -130,19 +168,32 @@ if timeout < 5*time.Second || timeout > 30*time.Second {
 }
 ```
 
-But, for all the gRPC and `gRPC-web` libraries among all the languages, I don't think every one of them will let you set deadlines in client request. Just think twice to implement this check on your service.
+But, for all the gRPC and `gRPC-web` libraries among all the languages, I don't
+think every one of them will let you set deadlines in client request. Just think
+twice to implement this check on your service.
 
-You can check for more about deadline propagation in this [vedio](https://www.youtube.com/watch?v=Z_yD7YPL2oE&list=FL_F0hJOcLaFNDptQDkcoSQA&index=3) (and other best practices).
+You can check for more about deadline propagation in this
+[vedio](https://www.youtube.com/watch?v=Z_yD7YPL2oE&list=FL_F0hJOcLaFNDptQDkcoSQA&index=3)
+(and other best practices).
 
 ## Interceptor and Metadata
 
-Interceptor is like the `middleware` in `REST` framework. You can get all you need from [this repo](https://github.com/grpc-ecosystem/go-grpc-middleware). The interceptor chain just works like middleware chain in `REST` framework.
+Interceptor is like the `middleware` in `REST` framework. You can get all you
+need from [this repo](https://github.com/grpc-ecosystem/go-grpc-middleware). The
+interceptor chain just works like middleware chain in `REST` framework.
 
-Almost in every `REST` framework, you can define a specific middleware for a specific controller or endpoint. Unfortuanately, I haven't found an easy way to do this in `gRPC`, you can only write interceptor for the whole server, after that, you can filter your routes in interceptor, or you can put the code directly in the `controller`.
+Almost in every `REST` framework, you can define a specific middleware for a
+specific controller or endpoint. Unfortuanately, I haven't found an easy way to
+do this in `gRPC`, you can only write interceptor for the whole server, after
+that, you can filter your routes in interceptor, or you can put the code
+directly in the `controller`.
 
-HTTP/2 version of http headers is `metadata`, which used in gRPC. You can find a detailed explanation [here](https://github.com/grpc/grpc-go/blob/master/Documentation/grpc-metadata.md).
+Metadata is the HTTP/2 version of http headers. Since gRPC uses HTTP/2, gRPC
+also use metadata. You can find a detailed explanation
+[here](https://github.com/grpc/grpc-go/blob/master/Documentation/grpc-metadata.md).
 
-A lot of things can be done with interceptor using metadata and context, like authentication and authorization.
+A lot of things can be done with interceptor using metadata and context, like
+authentication and authorization.
 
 To read metadata is easy:
 
@@ -153,13 +204,15 @@ if !ok {
 }
 ```
 
-`md` is of type `metadata.MD` which is `map[string][]string`. For example, to get the trace id:
+`md` is of type `metadata.MD` which is `map[string][]string`. For example, to
+get the trace id:
 
 ```
 IDs, ok := md["x-b3-traceid"]
 ```
 
-This solved only part of our problem. If you want to pass some data to other interceptor or `controller`, you can use `context`.
+This solved part of our problem, to read data from request. If you want to pass
+some data to other interceptor or `controller`, you can use `context`.
 
 ```
 type key int  
@@ -173,7 +226,8 @@ type Payload struct {
 }
 ```
 
-First, we need an unexported type `payloadKey` as an unique identifier, which won't be overwrite by other code or packages like the `REST` header name.
+First, we need an unexported type `payloadKey` as an unique identifier, which
+won't be overwrite by other code or packages like an ordinary metadata name.
 
 ```
 //newContext will create a new go `context` with the payload
@@ -204,7 +258,8 @@ func UnaryInterceptor() grpc.UnaryServerInterceptor {
 }
 ```
 
-That's only the case for unary interceptor, for stream interceptor, we can still use the unexported`payloadKey`and`FromContext`, but we need a wrapped stream.
+That's only the case for unary interceptor, for stream interceptor, we can still
+use the unexported`payloadKey`and`FromContext`, but we need a wrapped stream.
 
 ```
 //WrappedStream implement the grpc stream interface, but we need to modify the Context() method to return our new context with payload
@@ -227,10 +282,10 @@ func newWrappedStream(ss grpc.ServerStream, payload *Payload) *wrappedStream {
 func (w *wrappedStream) Context() context.Context {  
     return context.WithValue(w.parentCtx, payloadKey, w.payload)  
 }
-
 ```
 
-In this way, you don't need to modify any existing code.
+In this way, we utilize go's composition power, you don't need to modify any
+existing code.
 
 ```
 func StreamInterceptor() grpc.StreamServerInterceptor {  
@@ -241,9 +296,14 @@ func StreamInterceptor() grpc.StreamServerInterceptor {
 }
 ```
 
-With all the above, you can easily implement your own authentication and authorization logic.
+With all the above, you can easily implement your own authentication and
+authorization logic.
 
-But there is a problem, in `REST`, the request headers, url and method generally contain all the information you need for authorization, the `authorization` header will contain information about the user identity, the url will tell you which resource user requested, and the method is the user action. In gRPC, you still get the `authorization` metadata, and you can get user action from:
+But there is a problem, in `REST`, the request headers, url and method generally
+contain all the information you need for authorization, the `authorization`
+header will contain information about the user identity, the url will tell you
+which resource user requested, and the method is the user action. In gRPC, you
+still get the `authorization` metadata, you can get user action from:
 
 ```
 //The FullMethod will return a string contain gRPC package, service, rpc method
@@ -251,30 +311,37 @@ But there is a problem, in `REST`, the request headers, url and method generally
 info.FullMethod
 ```
 
-But you will not have any information about what resources user requested. Then, you need to put that information in the metadata if you want to do the authorization in interceptor. Or you can include the request resouces in request message.
+But you will not have any information about what resources user requested. Then,
+you need to put that information in the metadata if you want to do the
+authorization in interceptor. Or you will put the request resouces in request
+message.
 
-I prefer the first approach, but carefully design your api, as data related to your bussiness logic is now in metadata and request message.
+I prefer the first approach, but carefully design your api, as data related to
+your bussiness logic is now in metadata and request message.
 
 ## Partial Update
 
-gRPC use a `google.protobuf.FieldMask` to describe [partial update](https://cloud.google.com/apis/design/design\_patterns#partial\_response). 
+gRPC use a `google.protobuf.FieldMask` to describe
+[partial update](https://cloud.google.com/apis/design/design_patterns#partial_response).
 
 You can utilize reflect api in v2 to deal with the `FieldMask`:
 
 ```
-//get field mask field
-mask:=request.GetFieldMask()
-//validate field mask
-if !mask.IsValid(request) {
-	//return some error
+//check field mask exsistence
+if request.FieldMask != nil{
+	request.FieldMask.Normalize()
+	//check if the field mask is valid
+	if ok:=request.FieldMaks.IsValid(request); !ok{
+		return nil, status.Error(codes.InvalidArgument, "invalid field mask")
+	}	
 }
-// Normalize converts the mask to its canonical form where all paths are sorted and redundant paths are removed.
-mask.Normalize()
-maskPaths:=mask.GetPaths()
-//get proto message reflection
-//or you can do the partial update by your own without reflection since fv.(type) is realy annoying
-//Notice the protocol buffer `[list](https://pkg.go.dev/google.golang.org/protobuf/reflect/protoreflect#List)` and `[map](https://pkg.go.dev/google.golang.org/protobuf/reflect/protoreflect#List)` type is not same as the go `array` or `map` type.
-rft:=request.ProtoReflect()
+paths:=request.FieldMask.GetPaths()
+
+//the rest is on your own, you can do whatever you what with paths
+
+//for example, you can do partial update by your own without reflection since fv.(type) is realy annoying
+//notice the protocol buffer `[list](https://pkg.go.dev/google.golang.org/protobuf/reflect/protoreflect#List)` and `[map](https://pkg.go.dev/google.golang.org/protobuf/reflect/protoreflect#List)` type is not same as the go `array` or `map` type.
+rft := request.ProtoReflect()
 rft.Range(func(fd protoreflect.FieldDescriptor, fv protoreflect.Value) bool {
 	//compare fd.JSONName() to the maskPaths value
 	//get corresponse field value with fv.(type)
@@ -283,19 +350,37 @@ rft.Range(func(fd protoreflect.FieldDescriptor, fv protoreflect.Value) bool {
 
 ## Stream with Broadcast
 
-The most excitment part about gRPC of couse is its streaming ability. Though it's no easy feat to implement that for beginners of concurrency programming (like me). I hope I can ease your pain when implenting the gRPC streaming with broadcast.
+The most excitment part about gRPC of couse is its streaming ability. Though
+it's no easy feat to implement that for beginners of concurrency programming
+(like me). I hope I can ease your pain when implenting the gRPC streaming with
+broadcast.
 
 The basic here are:
 
-- Each handler runs in its own goroutine (each connection will have its own goroutine)
+- Each handler runs in its own goroutine (each connection will have its own
+  goroutine)
 
-As documented in [Concurrency](https://github.com/grpc/grpc-go/blob/master/Documentation/concurrency.md#servers):
+As documented in
+[Concurrency](https://github.com/grpc/grpc-go/blob/master/Documentation/concurrency.md#servers):
 
-> Each RPC handler attached to a registered server will be invoked in its own goroutine. For example, [SayHello](https://github.com/grpc/grpc-go/blob/master/examples/helloworld/greeter_server/main.go#L41) will be invoked in its own goroutine. The same is true for service handlers for streaming RPCs, as seen in the route guide example [here](https://github.com/grpc/grpc-go/blob/master/examples/route_guide/server/server.go#L126). Similar to clients, multiple services can be registered to the same server.
+> Each RPC handler attached to a registered server will be invoked in its own
+> goroutine. For example,
+> [SayHello](https://github.com/grpc/grpc-go/blob/master/examples/helloworld/greeter_server/main.go#L41)
+> will be invoked in its own goroutine. The same is true for service handlers
+> for streaming RPCs, as seen in the route guide example
+> [here](https://github.com/grpc/grpc-go/blob/master/examples/route_guide/server/server.go#L126).
+> Similar to clients, multiple services can be registered to the same server.
 
 - `chan` is not build for broadcast, it's one to one communication
 
-You will end up with some thing like `map[string]chan`, the `string` is an identifier to identify the goroutin (client connection), like a `sessionID`, or `tracingID`, or a random string, or `userID` (pay attention! only when you can be sure the user can only login to one instance, that is each user can only have a single active connetion, or the above `map` becomes to `map[userID]map[connectionID]chan`). The `chan` is created in the `controller` indicating the exact goroutine (connetion) which will receive message from, and the `controller` will pass the received message to client.
+You will end up with some thing like `map[string]chan`, the `string` is an
+identifier to identify the goroutin (client connection), like a `sessionID`, or
+`tracingID`, or a random string, or `userID` (pay attention! only when you can
+be sure the user can only login to one instance, that is each user can only have
+a single active connetion, or the above `map` becomes to
+`map[userID]map[connectionID]chan`). The `chan` is created in the `controller`
+indicating the exact goroutine (connetion) which will receive message from, and
+the `controller` will pass the received message to client.
 
 Here is an over simplified code:
 
@@ -326,35 +411,57 @@ func (s *server) TestHandler(req *pb.TestRequest, srv pb.TestServer) error {
 }
 ```
 
-For a server streaming handler above, you can share the `srv` between goroutines. The rest is up to you, you can put the `srv` in a `map` or `slice` based on what you want. Just be careful as documented in [Streams](https://github.com/grpc/grpc-go/blob/master/Documentation/concurrency.md#streams):
+For a server streaming handler above, you can share the `srv` between
+goroutines. The rest is up to you, you can put the `srv` in a `map` or `slice`
+based on what you want. Just be careful as documented in
+[Streams](https://github.com/grpc/grpc-go/blob/master/Documentation/concurrency.md#streams):
 
-> When using streams, one must take care to avoid calling either `SendMsg` or `RecvMsg` multiple times against the same [Stream](https://godoc.org/google.golang.org/grpc#Stream) from different goroutines. In other words, it's safe to have a goroutine calling `SendMsg` and another goroutine calling `RecvMsg` on the same stream at the same time. But it is not safe to call `SendMsg` on the same stream in different goroutines, or to call `RecvMsg` on the same stream in different goroutines.
+> When using streams, one must take care to avoid calling either `SendMsg` or
+> `RecvMsg` multiple times against the same
+> [Stream](https://godoc.org/google.golang.org/grpc#Stream) from different
+> goroutines. In other words, it's safe to have a goroutine calling `SendMsg`
+> and another goroutine calling `RecvMsg` on the same stream at the same time.
+> But it is not safe to call `SendMsg` on the same stream in different
+> goroutines, or to call `RecvMsg` on the same stream in different goroutines.
 
-And  you certainly need `sync.Mutex`, I will talk about it later.
+And you certainly need `sync.Mutex`, I will talk about it later.
 
-I personally don't like this approach, it will cause problems said above, and why not channels ?
+I personally don't like this approach, it will cause problems said above, and
+why not channels ?
 
 2. Sharing `map`
 
-With the `map` structure previously metioned, at some point you always want to modify the `map` structure in another goroutine. For example, you want to access the `map` and send message to the `chan` in one goroutine, and you want to add new connections or remove  connections from the `map` in other goroutine, then it comes to the `sync.Mutex`, just beware of dead locks.
+With the `map` structure previously metioned, at some point you always want to
+modify the `map` structure in another goroutine. For example, you want to access
+the `map` and send message to the `chan` in one goroutine, and you want to add
+new connections or remove connections from the `map` in other goroutine, then it
+comes to the `sync.Mutex`, just beware of dead locks.
 
 ```
-	mu.Lock()
+mu.Lock()
 	doSomething()
 	mu.Unlock()
 ```
 
-If `mu` is a `sync.Mutex` lock, always `Lock()` and `Unlock()` in the outer function, do not `Lock()` and `Unlock` in `doSomething()`, as your code become complicated, you will not notice when you `Lock()` twice.
+If `mu` is a `sync.Mutex` lock, always `Lock()` and `Unlock()` in the outer
+function, do not `Lock()` and `Unlock` in `doSomething()`, as your code become
+complicated, you will not notice when you `Lock()` twice.
 
-This approch is also sharing memory, and it prone to deadlocks. As said in [## [Share Memory By Communicating](https://blog.golang.org/codelab-share)](https://blog.golang.org/codelab-share)
+This approch is also sharing memory, and it prone to deadlocks. As said in [##
+[Share Memory By Communicating](https://blog.golang.org/codelab-share)](https://blog.golang.org/codelab-share)
 
 > Do not communicate by sharing memory; instead, share memory by communicating.
 
 Thus comes the third approch.
 
-3. An intermediate Channel
+### 3. An intermediate Channel
 
-We can have an interemediate goroutine which have the ownership of the `map` structure, by ownership I mean only this goroutine can modify the `map` structure. Message will be send to a intermediate channel `Broadcast`, and the `Broadcast` will modify the `map` structure, or send message to `channel` according to the identifier. The `Broadcast` have the ownership of the `map` structure, and the data flows in a single direction.
+We can have an interemediate goroutine which have the ownership of the `map`
+structure, by ownership I mean only this goroutine can modify the `map`
+structure. Message will be send to a intermediate channel `Broadcast`, and the
+`Broadcast` will modify the `map` structure, or send message to `channel`
+according to the identifier. The `Broadcast` have the ownership of the `map`
+structure, and the data flows in a single direction.
 
 Some code you can work with:
 
@@ -418,27 +525,44 @@ go func(){
 
 4. Maybe a counter?
 
-Without a `map` to identify the single `chan` used by the single connection, another approach I saw online is to use a counter. The counter will record the number of connections by a single `user` or a custom`subject`, the single `user` or `subject` will share a `chan`(comparing to the above, each connection use a singe `chan`), you can use the `sync.Mutex` or `sync/atomic` to modify the counter when new connection comes in or drop out. The counter will decide how many times you want to send to the `chan`.
+Without a `map` to identify the single `chan` used by the single connection,
+another approach I saw online is to use a counter. The counter will record the
+number of connections by a single `user` or a custom`subject`, the single `user`
+or `subject` will share a `chan`(comparing to the above, each connection use a
+singe `chan`), you can use the `sync.Mutex` or `sync/atomic` to modify the
+counter when new connection comes in or drop out. The counter will decide how
+many times you want to send to the `chan`.
 
 5. sync.Cond
 
-If the usecase is really simple, I think `sync.Cond` is also a valid approach, but myself never tries this.
+If the usecase is really simple, I think `sync.Cond` is also a valid approach,
+but myself never tries this.
 
-Personally I prefer the 3rd approach, it avoid memory sharing and the code is cleaner. 
+Personally I prefer the 3rd approach, it avoid memory sharing and the code is
+cleaner.
 
 6. Going distributed
 
-If you want to use a messaging system, like `kafka` or `NATS`, you just need to change the code in the intermediate `broadcast` channel, or you won't need to consider all the problems above.
+If you want to use a messaging system, like `kafka` or `NATS`, you just need to
+change the code in the intermediate `broadcast` channel, or you won't need to
+consider all the problems above.
 
 ## Continue
 
-A lot of topics havedn't been included, like grpc-web, testing, grpc-gateway, health check, profiling and so many things, I will continue with the 2nd post. Hope you like this one, if you have questions or suggestions, or how you solve the above problems, just submit a issue or PR [here](https://github.com/washanhanzi/washanhanzi.github.io), all is welcomed.
+A lot of topics havedn't been included, like grpc-web, testing, grpc-gateway,
+health check, profiling and so many things, I will continue with the 2nd post.
+Hope you like this one, if you have questions or suggestions, or how you solve
+the above problems, just submit a issue or PR
+[here](https://github.com/washanhanzi/washanhanzi.github.io), all is welcomed.
 
 ## Refs (No particular order)
+
 - [gRPC Go: Beyond the basics](https://blog.gopheracademy.com/advent-2017/go-grpc-beyond-basics/)
 - [Go gRPC进阶-go-grpc-middleware使用](https://www.cnblogs.com/FireworksEasyCool/p/12750339.html)
 - [Best Practices for (Go) gRPC Services](https://www.youtube.com/watch?v=Z_yD7YPL2oE&list=FL_F0hJOcLaFNDptQDkcoSQA&index=1)
-- [Yes, No, Maybe? Error Handling with gRPC Examples](https://www.usenix.org/conference/srecon19asia/presentation/sheerin)
+- [Yes, No, Maybe? Error Handling with gRPC
+  Examples](https://www.usenix.org/conference/srecon19asia/presentation/sheerin)
 - [gRPC in Practice](https://blog.stackpulse.com/tech-blog/grpc-in-practice-directory-structure-linting-and-more/?mode=dark)
 - [Handling Partial Update](https://djangogrpcframework.readthedocs.io/en/latest/patterns/partial_update.html)
-- [go protobuf v1败给了gogo protobuf，那v2呢？](https://tonybai.com/2020/04/24/gogoprotobuf-vs-goprotobuf-v1-and-v2/)
+- [go protobuf v1败给了gogo
+  protobuf，那v2呢？](https://tonybai.com/2020/04/24/gogoprotobuf-vs-goprotobuf-v1-and-v2/)
