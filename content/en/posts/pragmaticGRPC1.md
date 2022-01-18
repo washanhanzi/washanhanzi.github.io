@@ -8,6 +8,8 @@ draft: false
 
 ## `.proto` file
 
+Below are some useful tips to write your proto definition.
+
 In `.proto`:
 
 - The `package` field should contain version infomation, like `HelloService.v1`
@@ -22,9 +24,8 @@ rpc HelloWorld(HelloWorldRequest) returns (HelloWorldResponse){}
 A good place to start is
 [Goole API design guide](https://cloud.google.com/apis/design).
 
-Just keep in mind, protocol buffer language, like `go`, always have a default
-value, it can't differentiating unset value from default value. It's best to
-have a default value indicate unset value. As an example, always keep `0` as the
+Just keep in mind, protocol buffer, like `go`, always have a default
+value, it can't differentiating unset value from default value. As an example, always keep `0` as the
 unkown or unset value for `enum` (you should do it in `go` either, always start
 from `iota+1`):
 
@@ -42,7 +43,7 @@ enum Hello { 
 
 There are some packages will generate `proto` definition from your `struct`
 type. Personaly I didn't try them out. The benifit of this approch is appealing,
-especially you use a ORM like `gorm`. The `struct` will generate all the things
+especially you use an ORM like `gorm`. The `struct` will generate all the things
 you need, and it become your only source of truth.
 
 I think this approach is poorly
@@ -71,7 +72,7 @@ This package provides lots of extentions to custimize the
 `[golang/protobuf](https://github.com/golang/protobuf)`. Like the support of
 golang data type and marshaller function.
 
-The problem is the helpful library now is
+The problem is the helpful library is
 [looing for new ownership](https://github.com/gogo/protobuf/issues/691), and it
 didn't support the new version of go protocol buffer api.
 
@@ -85,10 +86,10 @@ you have 2 choices to cast your `struct` type to the generated type.
 
 1. Serillize and desrillize. Make sure you use the right library:
    `google.golang.org/protobuf/encoding/protojson`.
-2. Write some boilerplate code by your own. (or maybe you want do it with code
+2. Write some boilerplate code by your own. (or you want to do it with code
    generation?)
 
-The only thing to consider I think is performance, just benchmark with your own
+I think the only thing to consider is performance, just benchmark with your own
 proto message you will come to a conclusion. Generally, I prefer the second one.
 
 ### code generation
@@ -111,22 +112,19 @@ module.
 
 ## Error
 
-In gRPC, you don't need to include the error information in every response like
-in `restful api`. Error in gRPC can contain the error code and error message
-itself. If you got a response with code `ok`, then it indicate the request is
-`successful(?)`. To construct an gRPC error is really simple:
+In `restful api`, sometimes people put error code and error message in every response (which is a bad practice). Don't do that in gRPC. gRPC error can contain the error code and the error message. If you got a response with code `ok`, then it indicate the request is `successful(?)`. To construct an gRPC error is really simple:
 
 ```
-status.Error(codes.Internal, "your request failed")
+status.Error(codes.Internal, "request failed")
 ```
 
 You can check the gRPC error type with:
 
 ```
-if se, ok := err.(interface {  
-    	GRPCStatus() *status.Status  
-    }); ok {  
-    return se.GRPCStatus().Err()  
+//"google.golang.org/grpc/status"
+
+if se, ok := status.FromError(err);ok {
+	return se.Err()
 }
 ```
 
@@ -178,7 +176,7 @@ You can check for more about deadline propagation in this
 
 ## Interceptor and Metadata
 
-Interceptor is like the `middleware` in `REST` framework. You can get all you
+Interceptor is like the `middleware` in `REST` framework. You can get all your
 need from [this repo](https://github.com/grpc-ecosystem/go-grpc-middleware). The
 interceptor chain just works like middleware chain in `REST` framework.
 
@@ -188,14 +186,13 @@ do this in `gRPC`, you can only write interceptor for the whole server, after
 that, you can filter your routes in interceptor, or you can put the code
 directly in the `controller`.
 
-Metadata is the HTTP/2 version of http headers. Since gRPC uses HTTP/2, gRPC
-also use metadata. You can find a detailed explanation
+Metadata in gRPC is the HTTP/2 version of http headers. You can find a detailed explanation
 [here](https://github.com/grpc/grpc-go/blob/master/Documentation/grpc-metadata.md).
 
-A lot of things can be done with interceptor using metadata and context, like
+A lot of things can be done with interceptors using metadata and context, like
 authentication and authorization.
 
-To read metadata is easy:
+To read data from metadata is easy:
 
 ```
 md, ok := metadata.FromIncomingContext(ctx)  
@@ -543,17 +540,12 @@ cleaner.
 
 6. Going distributed
 
-If you want to use a messaging system, like `kafka` or `NATS`, you just need to
-change the code in the intermediate `broadcast` channel, or you won't need to
-consider all the problems above.
+If you want to use a messaging system, like `kafka` or `NATS`, you just need to change the code in the intermediate `broadcast` channel, or you won't need to consider all the problems above.
 
 ## Continue
 
-A lot of topics havedn't been included, like grpc-web, testing, grpc-gateway,
-health check, profiling and so many things, I will continue with the 2nd post.
-Hope you like this one, if you have questions or suggestions, or how you solve
-the above problems, just submit a issue or PR
-[here](https://github.com/washanhanzi/washanhanzi.github.io), all is welcomed.
+A lot of topics havedn't been included, like grpc-web, testing, grpc-gateway, health check, profiling and so many things, I will continue with the 2nd post.
+Hope you like this one, if you have questions or suggestions, or how you solve the above problems, just submit a issue [here](https://github.com/washanhanzi/washanhanzi.github.io), all is welcomed.
 
 ## Refs (No particular order)
 
