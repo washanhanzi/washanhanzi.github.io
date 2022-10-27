@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json.schemastore.org/web-manifest-combined.json",
+  "name": "N1ll",
+  "short_name": "N1ll",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#fff",
+  "description": "A personal blog"
+}
