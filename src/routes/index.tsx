@@ -4,7 +4,7 @@ import type { DocumentHead } from '@builder.io/qwik-city';
 export default component$(() => {
   return (
     <>
-      <h1>Welcome to Qwik Docs Starter</h1>
+      <p class="text-4xl">N1ll</p>
 
       <ul>
         <li>This homepage uses a layout without a menu.</li>
