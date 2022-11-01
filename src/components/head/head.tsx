@@ -1,16 +1,13 @@
 import { component$ } from '@builder.io/qwik';
 import { useDocumentHead, useLocation } from '@builder.io/qwik-city';
 
-/**
- * The RouterHead component is placed inside of the document `<head>` element.
- */
-export const RouterHead = component$(() => {
+export const Head = component$(() => {
   const head = useDocumentHead();
   const loc = useLocation();
 
   return (
     <>
-      <title>{head.title}</title>
+      <title>{head.title ? head.title : "N1ll"}</title>
 
       <link rel="canonical" href={loc.href} />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
