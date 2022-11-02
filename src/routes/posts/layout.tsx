@@ -1,6 +1,6 @@
 import { component$, Slot } from '@builder.io/qwik';
 import type { DocumentHead } from '@builder.io/qwik-city';
-import Menu from '~/components/menu/menu';
+import { Menu } from './component/menu';
 
 export default component$(() => {
   return (
