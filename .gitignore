@@ -1,18 +1,46 @@
-# Binaries for programs and plugins
-*.exe
-*.exe~
-*.dll
-*.so
-*.dylib
+# Build
+/dist
+/lib
+/lib-types
+/server
 
-# Test binary, built with `go test -c`
-*.test
-
-# Output of the go coverage tool, specifically when used with LiteIDE
-*.out
-
-# Dependency directories (remove the comment below to include it)
-# vendor/
-.DS_Store
-.vscode/
+# Development
 node_modules
+
+# Cache
+.cache
+.mf
+.vscode
+.rollup.cache
+tsconfig.tsbuildinfo
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Editor
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Yarn
+.yarn/*
+!.yarn/releases
+
+# leftover
+.next
+tmp
+
+public
+# starter app
+qwik-app

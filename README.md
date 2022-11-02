@@ -76,3 +76,9 @@ npm run ssg
 ```
 npm run ssg
 ```
+
+## Static Site Generator (Node.js)
+
+```
+npm run ssg
+```
