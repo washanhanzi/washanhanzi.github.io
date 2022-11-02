@@ -22,13 +22,20 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "baseUrl": "./",
+    "paths": {
+      "@module/*": [
+        "./module/*"
+      ]
+    }
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "app/posts/pragmaticgrpc1/page.mdx"
   ],
   "exclude": [
     "node_modules"

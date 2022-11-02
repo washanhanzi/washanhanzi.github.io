@@ -1,3 +1,5 @@
+import '../styles/globals.css';
+
 export default function RootLayout({
   children,
 }: {
@@ -5,8 +7,9 @@ export default function RootLayout({
 }) {
   return (
     <html>
-      <head></head>
-      <body>{children}</body>
+      <body className='bg-slate-900 '>
+        {children}
+      </body>
     </html>
   )
 }
