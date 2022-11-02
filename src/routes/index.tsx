@@ -1,17 +1,30 @@
 import { component$ } from '@builder.io/qwik';
 import type { DocumentHead } from '@builder.io/qwik-city';
+import { GithubIcon } from '~/components/github-icon/github-icon';
+import IndexMenu from "~/components/index-menu/index-menu";
 
 export default component$(() => {
+  const menu: { name: string, href: string, date: string }[] = [
+    {
+      name: "Pragmatic gRPC 1",
+      href: "/posts/pragmaticgrpc1",
+      date: "2021-05-30"
+    }
+  ]
   return (
     <>
-      <p class="text-4xl py-4">N1ll</p>
-      <a href="https://github.com/washanhanzi" target="_blank" rel="author" title="Github"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a>
-      <p class="py-4">Garbberish</p>
-      <ul>
-        <li>
-          <a href="/post">some post</a>
-        </li>
-      </ul>
+      <div class="grid grid-cols-1 md:grid-cols-[1fr_600px_1.2fr] gap-4 text-zinc-300 text-base pt-3">
+        <div></div>
+        <div>
+          <p class="text-4xl py-4">N1ll</p>
+          <a href="https://github.com/washanhanzi" target="_blank" rel="author" title="Github">
+            <GithubIcon />
+          </a>
+          <p class="py-4">Garbberish</p>
+          <IndexMenu data={menu} />
+        </div>
+        <div></div>
+      </div>
     </>
   );
 });
