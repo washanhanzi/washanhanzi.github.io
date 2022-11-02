@@ -4,9 +4,9 @@ import Menu from '~/components/menu/menu';
 
 export default component$(() => {
   return (
-    <div class="grid grid-cols-1 md:grid-cols-[1fr_600px_1.2fr] gap-4 text-zinc-300 text-base pt-3">
+    <div class="grid grid-cols-1 md:grid-cols-[1fr_600px_1.2fr] gap-4">
       <div></div>
-      <article>
+      <article class="prose dark:prose-invert">
         <Slot />
       </article>
       <Menu />
