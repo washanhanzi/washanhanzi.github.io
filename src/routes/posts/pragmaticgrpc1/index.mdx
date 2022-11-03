@@ -15,7 +15,7 @@ In `.proto`:
   will be the the service rpc method name with a `Request` or `Response` suffix.
   Like:
 
-```go
+```protobuf
 rpc HelloWorld(HelloWorldRequest) returns (HelloWorldResponse){}
 ```
 
@@ -27,7 +27,7 @@ value, it can't differentiating unset value from default value. As an example, a
 unkown or unset value for `enum` (you should do it in `go` either, always start
 from `iota+1`):
 
-```proto3
+```protobuf
 enum Hello { 
 	UNKNOWN = 0;
 	STARTED = 1;
@@ -62,7 +62,7 @@ The problem is you can't easily cast your `struct` type to `.proto` generated
 fields. An easy solution is to use the `gogofaster` binary of
 [gogoprotobuf](https://github.com/gogo/protobuf), like:
 
-```
+```protobuf
 protoc --proto_path proto  --gogofaster_out="plugins=grpc:." ./proto/*.proto
 ```
 
@@ -95,7 +95,7 @@ proto message you will come to a conclusion. Generally, I prefer the second one.
 With the newly v2 api, here is an example how to generate go code from `.proto`
 file.
 
-```
+```shell
 protoc -I=proto --go\_out\=module\=github.com/hello/hello:. \
 --go-grpc_out=module=github.com/hello/hello:. \
 ./proto/\*.proto
@@ -112,13 +112,13 @@ module.
 
 In `restful api`, sometimes people put error code and error message in every response (which is a bad practice). Don't do that in gRPC. gRPC error can contain the error code and the error message. If you got a response with code `ok`, then it indicate the request is `successful(?)`. To construct an gRPC error is really simple:
 
-```
+```go
 status.Error(codes.Internal, "request failed")
 ```
 
 You can check the gRPC error type with:
 
-```
+```go
 //"google.golang.org/grpc/status"
 
 if se, ok := status.FromError(err);ok {
@@ -190,7 +190,7 @@ authentication and authorization.
 
 To read data from metadata is easy:
 
-```
+```go
 md, ok := metadata.FromIncomingContext(ctx)
 if !ok {
     //return some error
@@ -200,14 +200,14 @@ if !ok {
 `md` is of type `metadata.MD` which is `map[string][]string`. For example, to
 get the trace id:
 
-```
+```go
 IDs, ok := md["x-b3-traceid"]
 ```
 
 This solved part of our problem, to read data from request. If you want to pass
 some data to other interceptor or `controller`, you can use `context`.
 
-```
+```go
 type key int
 
 //payloadKey is unexported, to prevent collisions with keys defined in other packages
@@ -222,14 +222,14 @@ type Payload struct {
 First, we need an unexported type `payloadKey` as an unique identifier, which
 won't be overwrite by other code or packages like an ordinary metadata name.
 
-```
+```go
 //newContext will create a new go `context` with the payload
 func newContext(ctx context.Context, payload *Payload) context.Context {
     return context.WithValue(ctx, payloadKey, payload)
 }
 ```
 
-```
+```go
 //FromContext can be used in all controllers to get the payload from `context`
 func FromContext(ctx context.Context) (*Payload, bool) {
 	payload, ok := ctx.Value(payloadKey).(*MetaPayload)
@@ -239,7 +239,7 @@ func FromContext(ctx context.Context) (*Payload, bool) {
 
 Combine with the above `interceptor chain`:
 
-```
+```go
 func UnaryInterceptor() grpc.UnaryServerInterceptor {
  	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 	//read data from metadata
@@ -254,7 +254,7 @@ func UnaryInterceptor() grpc.UnaryServerInterceptor {
 That's only the case for unary interceptor, for stream interceptor, we can still
 use the unexported`payloadKey`and`FromContext`, but we need a wrapped stream.
 
-```
+```go
 //WrappedStream implement the grpc stream interface, but we need to modify the Context() method to return our new context with payload
 type WrappedStream interface {
 	grpc.ServerStream
@@ -280,7 +280,7 @@ func (w *wrappedStream) Context() context.Context {
 In this way, we utilize go's composition power, you don't need to modify any
 existing code.
 
-```
+```go
 func StreamInterceptor() grpc.StreamServerInterceptor {
 	return func(srv interface{}, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
 	//some code
@@ -298,7 +298,7 @@ header will contain information about the user identity, the url will tell you
 which resource user requested, and the method is the user action. In gRPC, you
 still get the `authorization` metadata, you can get user action from:
 
-```
+```go
 //The FullMethod will return a string contain gRPC package, service, rpc method
 //Remember the gRPC package is versioned? make sure update the gRPC package version won't break your authorization code
 info.FullMethod
@@ -319,7 +319,7 @@ gRPC use a `google.protobuf.FieldMask` to describe
 
 You can utilize reflect api in v2 to deal with the `FieldMask`:
 
-```
+```go
 //check field mask exsistence
 if request.FieldMask != nil{
 	request.FieldMask.Normalize()
@@ -377,7 +377,7 @@ the `controller` will pass the received message to client.
 
 Here is an over simplified code:
 
-```
+```go
 func (s *server) Subscribe(req *pb.SubscribeRequest, srv pb.SubscribeServer) error {
 	//get trace id or generated a random string or whatever you want to indicate this goroutine
 	ID:="randomString"
@@ -398,7 +398,7 @@ Below are some approaches I saw or I can think of:
 
 This will avoid this `map` structure or maybe all the `channel` things.
 
-```
+```go
 func (s *server) TestHandler(req *pb.TestRequest, srv pb.TestServer) error {
 	...
 }
@@ -430,7 +430,7 @@ the `map` and send message to the `chan` in one goroutine, and you want to add
 new connections or remove connections from the `map` in other goroutine, then it
 comes to the `sync.Mutex`, just beware of dead locks.
 
-```
+```go
 mu.Lock()
 	doSomething()
 	mu.Unlock()
@@ -458,7 +458,7 @@ structure, and the data flows in a single direction.
 
 Some code you can work with:
 
-```
+```go
 func (s *server) Subscribe(req *pb.SubscribeRequest, srv pb.SubscribeServer) error {
 	//get trace id or generated a random string or whatever you want to indicate this goroutine
 	ID:="randomString"
@@ -497,7 +497,7 @@ func (s *server) Subscribe(req *pb.SubscribeRequest, srv pb.SubscribeServer) err
 }
 ```
 
-```
+```go
 //this goroutine has the ownership of the map[string]chan *pb.SubscribeResponse
 go func(){
 	for v:=range s.broadcast {

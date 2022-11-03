@@ -37,4 +37,5 @@ module.exports = {
     'no-console': 'off',
     '@typescript-eslint/no-unused-vars': ['error'],
   },
+  ignorePatterns: ["postcss.config.cjs", "tailwind.config.cjs"],
 };
