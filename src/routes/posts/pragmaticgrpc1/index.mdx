@@ -15,7 +15,7 @@ In `.proto`:
   will be the the service rpc method name with a `Request` or `Response` suffix.
   Like:
 
-```
+```go
 rpc HelloWorld(HelloWorldRequest) returns (HelloWorldResponse){}
 ```
 
@@ -27,7 +27,7 @@ value, it can't differentiating unset value from default value. As an example, a
 unkown or unset value for `enum` (you should do it in `go` either, always start
 from `iota+1`):
 
-```
+```proto3
 enum Hello { 
 	UNKNOWN = 0;
 	STARTED = 1;
@@ -131,7 +131,6 @@ You can read more about the gRPC error code and examplanation
 
 For all the error codes, your application should only consider return these:
 
-```
 InvalidArgument [Code](https://pkg.go.dev/google.golang.org/grpc/codes#Code) = 3
 NotFound [Code](https://pkg.go.dev/google.golang.org/grpc/codes#Code) = 5
 AlreadyExists [Code](https://pkg.go.dev/google.golang.org/grpc/codes#Code) = 6
@@ -141,7 +140,6 @@ Aborted [Code](https://pkg.go.dev/google.golang.org/grpc/codes#Code) = 10
 OutOfRange [Code](https://pkg.go.dev/google.golang.org/grpc/codes#Code) = 11
 DataLoss [Code](https://pkg.go.dev/google.golang.org/grpc/codes#Code) = 15
 Unauthenticated [Code](https://pkg.go.dev/google.golang.org/grpc/codes#Code) = 16
-```
 
 If you want dig more into the gRPC error, I suggest to watch this
 [vedio](https://www.youtube.com/watch?v=g44zR3cyC-I&t=512s).
@@ -152,7 +150,7 @@ It's best practice to use deadlines.
 
 You can check whether client set a deadline:
 
-```
+```go
 d,ok := ctx.Deadline()
 if !ok {
 	//return some error

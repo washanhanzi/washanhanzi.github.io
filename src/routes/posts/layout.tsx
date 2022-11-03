@@ -1,8 +1,10 @@
-import { component$, Slot } from '@builder.io/qwik';
+import { component$, Slot, useStyles$ } from '@builder.io/qwik';
 import type { DocumentHead } from '@builder.io/qwik-city';
 import { Menu } from './component/menu';
+import styles from "./posts.css"
 
 export default component$(() => {
+  useStyles$(styles);
   return (
     <div class="grid grid-cols-1 md:grid-cols-[1fr_800px_1.2fr] gap-4">
       <div></div>

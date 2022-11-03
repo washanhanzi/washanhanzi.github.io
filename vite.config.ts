@@ -4,12 +4,17 @@ import { qwikCity } from "@builder.io/qwik-city/vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { partytownVite } from "@builder.io/partytown/utils";
 import { join } from "path";
-
+import rehypeHighlight from "rehype-highlight";
 
 export default defineConfig(() => {
   return {
     plugins: [
       qwikCity({
+        mdx: {
+          rehypePlugins: [
+            {}
+          ]
+        }
       }),
       qwikVite(),
       tsconfigPaths(),
