@@ -2,7 +2,8 @@ import { defineDocumentType, makeSource } from 'contentlayer/source-files'
 
 export const Post = defineDocumentType(() => ({
 	name: 'Post',
-	filePathPattern: `**/*.md`,
+	filePathPattern: `**/*.mdx`,
+	contentType: "mdx",
 	fields: {
 		title: {
 			type: 'string',
@@ -14,12 +15,13 @@ export const Post = defineDocumentType(() => ({
 			description: 'The date of the post',
 			required: true,
 		},
+		slug: {
+			type: "string",
+			description: "The url of the post",
+			required: true,
+		}
 	},
 	computedFields: {
-		url: {
-			type: 'string',
-			resolve: (post) => `/posts/${post._raw.flattenedPath}`,
-		},
 	},
 }))
 

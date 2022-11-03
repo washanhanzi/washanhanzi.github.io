@@ -17,7 +17,7 @@ function PostCard(post) {
         {format(parseISO(post.date), 'LLLL d, yyyy')}
       </time>
       <h2 className="text-lg">
-        <Link href={post.url}>
+        <Link href={`/posts/${post.slug}`}>
           <p className="text-blue-700 hover:text-blue-900" >{post.title}</p>
         </Link>
       </h2>
