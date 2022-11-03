@@ -1,9 +1,8 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import { format, parseISO } from 'date-fns'
-import { allPosts } from 'contentlayer/generated'
+import { allPosts, Post } from 'contentlayer/generated'
 import { useMDXComponent } from 'next-contentlayer/hooks'
-
 
 export async function getStaticPaths() {
 	const paths = allPosts.map((post) => { return { params: { slug: post.slug } } })
@@ -13,7 +12,7 @@ export async function getStaticPaths() {
 	}
 }
 
-export async function getStaticProps({ params }) {
+export async function getStaticProps({ params }: { params: { slug: string } }) {
 	const post = allPosts.find((post) => post.slug === params.slug)
 	return {
 		props: {
@@ -22,7 +21,7 @@ export async function getStaticProps({ params }) {
 	}
 }
 
-const PostLayout = ({ post }) => {
+const PostLayout = ({ post }: { post: Post }) => {
 	const MDXContent = useMDXComponent(post.body.code)
 
 	return (
@@ -30,21 +29,15 @@ const PostLayout = ({ post }) => {
 			<Head>
 				<title>{post.title}</title>
 			</Head>
-			<article className="mx-auto max-w-2xl py-16">
-				<div className="mb-6 text-center">
-					<Link href="/">
-						<p className="text-center text-sm font-bold uppercase text-blue-700">Home</p>
-					</Link>
+			<div className="grid grid-cols-1 md:grid-cols-[1fr_760px_1.3fr] gap-4 text-zinc-300">
+				<div></div>
+				<article className="prose dark:prose-invert p-4 overflow-x-hidden">
+					<MDXContent />
+				</article>
+				<div className="invisible md:visible fixed top-24 right-10">
+					<div >123</div>
 				</div>
-				<div className="mb-6 text-center">
-					<h1 className="mb-1 text-3xl font-bold">{post.title}</h1>
-					<time dateTime={post.date} className="text-sm text-slate-600">
-						{format(parseISO(post.date), 'LLLL d, yyyy')}
-					</time>
-				</div>
-				<MDXContent />
-
-			</article>
+			</div>
 		</>
 	)
 }
