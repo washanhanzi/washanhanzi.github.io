@@ -15,7 +15,7 @@ export default component$(() => {
       <article class="prose dark:prose-invert p-4 overflow-x-hidden">
         <Slot />
       </article>
-      <div class="invisible md:visible fixed top-1/3 right-10">
+      <div class="invisible md:visible fixed top-24 right-10">
         <Menu />
       </div>
     </div>
