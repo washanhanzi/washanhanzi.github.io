@@ -18,15 +18,9 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
-    "baseUrl": "./",
     "paths": {
-      "@module/*": [
-        "./module/*"
+      "contentlayer/generated": [
+        "./.contentlayer/generated"
       ]
     }
   },
@@ -34,8 +28,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts",
-    "app/posts/pragmaticgrpc1/page.mdx"
+    ".contentlayer/generated"
   ],
   "exclude": [
     "node_modules"
