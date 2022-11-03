@@ -1,8 +1,18 @@
-import { defineDocumentType, makeSource } from 'contentlayer/source-files'
+import { defineDocumentType, defineNestedType, makeSource } from 'contentlayer/source-files'
 import rehypePrism from "rehype-prism-plus"
 import remarkGfm from 'remark-gfm'
-import rehypeAutolinkHeadings from 'rehype-autolink-headings'
+import rehypeSlug from 'rehype-slug'
+import GithubSlugger from 'github-slugger'
 
+
+const Heading = defineNestedType(() => ({
+	name: "Heading",
+	fields: {
+		level: { type: "number", required: true },
+		text: { type: "string", required: true },
+		id: { type: "string", required: true }
+	}
+}))
 
 export const Post = defineDocumentType(() => ({
 	name: 'Post',
@@ -26,6 +36,14 @@ export const Post = defineDocumentType(() => ({
 		}
 	},
 	computedFields: {
+		headings: {
+			type: "List",
+			of: Heading,
+			resolve: (post) => {
+				const h = getHeadings(post.body.raw)
+				return h
+			}
+		}
 	},
 }))
 
@@ -33,10 +51,26 @@ export default makeSource({
 	contentDirPath: 'posts',
 	documentTypes: [Post],
 	mdx: {
-		remarkPlugins: [remarkGfm],
+		remarkPlugins: [
+			remarkGfm,
+		],
 		rehypePlugins: [
-			rehypeAutolinkHeadings,
+			rehypeSlug,
 			[rehypePrism, { ignoreMissing: true }]
 		],
 	}
 })
+
+export async function getHeadings(content) {
+	const slugger = new GithubSlugger()
+	const regXHeader = /(?<flag>#{1,6})\s+(?<content>.+)/g
+	return Array
+		.from(
+			content.matchAll(regXHeader)
+		)
+		.map(({ groups: { flag, content } }) => ({
+			level: flag.length,
+			text: content,
+			id: slugger.slug(content)
+		}))
+}
