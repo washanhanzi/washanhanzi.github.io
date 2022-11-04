@@ -42,5 +42,7 @@ lerna-debug.log*
 tmp
 
 public
+.contentlayer
+out
 # starter app
 qwik-app
