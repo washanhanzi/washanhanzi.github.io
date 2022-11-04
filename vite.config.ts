@@ -8,6 +8,9 @@ import rehypePrism from "rehype-prism-plus"
 
 export default defineConfig(() => {
   return {
+    ssr: {
+      target: "node"
+    },
     plugins: [
       qwikCity({
         mdxPlugins: {
