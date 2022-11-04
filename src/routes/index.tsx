@@ -1,8 +1,9 @@
-import { component$ } from '@builder.io/qwik';
+import { component$, useSignal } from '@builder.io/qwik';
 import type { DocumentHead } from '@builder.io/qwik-city';
 import { GithubIcon, Menu } from './component';
 
 export default component$(() => {
+  useSignal
   const menu: { name: string, href: string, date: string }[] = [
     {
       name: "Pragmatic gRPC 1",

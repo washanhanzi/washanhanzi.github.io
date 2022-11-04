@@ -1,7 +1,6 @@
-import { component$ } from '@builder.io/qwik';
 import { IndexMenu } from '../entity';
 
-export const Menu = component$(({ menu }: { menu: IndexMenu[] }) => {
+export const Menu = (({ menu }: { menu: IndexMenu[] }) => {
 	return (
 		<div >
 			{
