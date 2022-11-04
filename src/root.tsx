@@ -11,6 +11,8 @@ export default component$(() => {
     <QwikCity>
       <head>
         <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width" />
+        <meta name="description" content="A personal blog about programming and writing" />
         <QwikPartytown forward={["dataLayer.push"]} />;
         <script
           async
@@ -19,7 +21,7 @@ export default component$(() => {
         />;
         <Head />
       </head>
-      <body lang="en" class="bg-slate-900">
+      <body lang="en">
         <RouterOutlet />
         <ServiceWorkerRegister />
       </body>
