@@ -15,7 +15,7 @@ export default component$(() => {
     <>
       <div class="grid grid-cols-1 md:grid-cols-[1fr_600px_1.1fr] gap-4 text-zinc-300 pt-3">
         <div></div>
-        <div>
+        <div class="px-6">
           <p class="text-4xl py-4">N1ll</p>
           <a href="https://github.com/washanhanzi" target="_blank" rel="author" title="Github">
             <GithubIcon />

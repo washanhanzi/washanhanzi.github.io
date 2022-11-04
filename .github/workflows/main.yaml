@@ -1,0 +1,41 @@
+name: build
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: change branch
+        run: |
+          git branch release
+          git checkout release
+      - name: activate pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@latest --activate
+      - name: build
+        run: |
+          pnpm install
+          pnpm run build
+      - name: add and commit
+        run: |
+          git config --global url."https://${{ secrets.PERSONAL_TOKEN }}:x-oauth-basic@github.com/".insteadOf "https://github.com/"
+          git config user.email "francismajere@gmail.com"
+          git config user.name "frank"
+          git add --force docs/partytown
+          git add --force docs
+          git commit -am "build"
+      - name: push
+        run: |
+          git push origin release --force

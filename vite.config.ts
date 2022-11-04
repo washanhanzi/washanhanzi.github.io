@@ -26,7 +26,7 @@ export default defineConfig(() => {
       }),
       qwikVite({ client: { outDir: "docs" } }),
       tsconfigPaths(),
-      partytownVite({ dest: join(__dirname, "public", "~partytown") }),
+      partytownVite({ dest: join(__dirname, "docs", "partytown") }),
     ],
     preview: {
       headers: {
