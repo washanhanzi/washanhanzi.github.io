@@ -12,7 +12,7 @@ export default component$(() => {
   return (
     <div class="grid grid-cols-1 md:grid-cols-[1fr_800px_1.2fr] gap-4">
       <div></div>
-      <article class="prose dark:prose-invert p-4 overflow-x-hidden">
+      <article class="prose dark:prose-invert p-4 overflow-x-hidden ::selection:bg-fuchsia-700">
         <Slot />
       </article>
       <div class="invisible md:visible fixed top-24 right-10">

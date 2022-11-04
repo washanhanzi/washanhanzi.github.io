@@ -8,8 +8,5 @@ module.exports = {
     require('@tailwindcss/typography'),
   ],
   safelist: [
-    "pl-4",
-    "pl-5",
-    "pl-6",
   ]
 };

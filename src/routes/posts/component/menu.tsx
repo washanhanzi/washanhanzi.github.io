@@ -1,11 +1,12 @@
-import { component$ } from "@builder.io/qwik";
+import { component$, useStyles$ } from "@builder.io/qwik";
 import { ContentHeading, useContent } from "@builder.io/qwik-city";
-
+import style from "../style/link.css"
 export const Menu = component$(() => {
+	useStyles$(style)
 	const { headings } = useContent()
 	return (
-		<aside class="text-zinc-300 ">
-			<div class="w-48 text-sm font-medium">
+		<aside class=" text-zinc-300">
+			<div class="w-48 text-sm ">
 				{
 					headings?.map((h) => (
 						headingItem(h)
@@ -13,7 +14,7 @@ export const Menu = component$(() => {
 				}
 			</div>
 			<a href="/">
-				<p class="underline decoration-green-500">Back?</p>
+				<div class="underline decoration-green-500 inline-block">Back?</div>
 			</a>
 		</aside>
 	)
@@ -21,29 +22,27 @@ export const Menu = component$(() => {
 
 //heaingTiem generate the heading component
 export function headingItem(h: ContentHeading) {
-	if (h.level === 1) {
+	if (h.level === 1 || h.level > 3) {
 		return null
 	}
 	const inPageId = `#${h.id}`
-	const className = `block py-2 ${getPl(h.level)}`
+	const className = `block ${getClassNames(h.level)}`
 	return (
 		<a href={inPageId} class={className}>
-			{h.text}
+			<div class="inline-block magma">{h.text}</div>
 		</a>
 	)
 }
 
 //getPl calculate the headings' left padding
-export function getPl(level: number) {
+export function getClassNames(level: number) {
 	switch (level) {
 		case 2:
-			return ""
+			return "font-bold text-cyan-500 text-sm"
 		case 3:
-			return "pl-4"
-		case 4:
-			return "pl-5"
+			return "pl-4 font-light text-red-500 text-xs"
 		default:
-			return "pl-6"
+			return ""
 
 	}
 }

@@ -1,0 +1,10 @@
+a>div.cold {
+	transition: 0.3s;
+}
+
+a>div.cold:hover {
+	background: linear-gradient(120deg, #4577df, #3d83e1, #348fe1, #2c9bdf, #25a7da, #20b3d3, #1cbecb, #19c9c0, #19d3b5, #1cdba8, #20e39b, #27ea8e, #31ef82, #3df376, #4bf56b, #5af663, #6bf65c, #7ef658, #91f457, #a4f158);
+	background-clip: text;
+	-webkit-background-clip: text;
+	color: transparent;
+}

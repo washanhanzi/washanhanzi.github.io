@@ -1,0 +1,10 @@
+a>div.magma {
+	transition: 0.3s;
+}
+
+a>div.magma:hover {
+	background: linear-gradient(120deg, #7e2482, #8e2a81, #9e2f7f, #ae347b, #bf3a77, #cf4070, #de4968, #ea5661, #f3655c, #f9785d, #fc8a62, #fe9d6c, #feb078, #fec287, #fed597, #fde7a9, #fcf9bb);
+	background-clip: text;
+	-webkit-background-clip: text;
+	color: transparent;
+}

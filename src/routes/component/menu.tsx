@@ -6,7 +6,7 @@ export const Menu = (({ menu }: { menu: IndexMenu[] }) => {
 			{
 				menu.map((item) => (
 					<a key={item.href} href={item.href}>
-						<p class="underline decoration-green-500">{item.date} {item.name}</p>
+						<div class="underline decoration-green-500 inline-block cold">{item.date} {item.name}</div>
 					</a>
 				))
 			}
