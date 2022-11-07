@@ -6,7 +6,7 @@ export const Menu = component$(() => {
 	const { headings } = useContent()
 	return (
 		<aside class=" text-zinc-300">
-			<div class="w-48 text-sm ">
+			<div class="w-48">
 				{
 					headings?.map((h) => (
 						headingItem(h)
@@ -34,13 +34,13 @@ export function headingItem(h: ContentHeading) {
 	)
 }
 
-//getPl calculate the headings' left padding
+//getPl calculate the headings' style
 export function getClassNames(level: number) {
 	switch (level) {
 		case 2:
-			return "font-bold text-cyan-500 text-sm"
+			return "font-bold text-cyan-500 text-base"
 		case 3:
-			return "pl-4 font-light text-red-500 text-xs"
+			return "pl-4 font-light text-red-500 text-sm"
 		default:
 			return ""
 

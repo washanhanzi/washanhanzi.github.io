@@ -1,0 +1,67 @@
+$ease: cubic-bezier(.2, 1, .3, 1);
+
+.arrow {
+
+	svg {
+		fill: #aaaaaa;
+		width: 30px;
+		height: auto;
+	}
+
+	&--active {
+		svg {
+			fill: #f0abfc;
+			overflow: visible;
+			cursor: pointer;
+
+			polygon,
+			path {
+				transition: all 0.5s $ease;
+			}
+
+			&:hover polygon,
+			&:hover path {
+				transition: all 1s $ease;
+				fill: #f0abfc;
+			}
+
+			&:hover .arrow {
+				animation: arrow-anim 2.5s $ease infinite;
+			}
+
+			&:hover .arrow-fixed {
+				animation: arrow-fixed-anim 2.5s $ease infinite;
+			}
+		}
+	}
+}
+
+@keyframes arrow-anim {
+	0% {
+		opacity: 1;
+		transform: translateX(0);
+	}
+
+	5% {
+		transform: translateX(-0.1rem);
+	}
+
+	100% {
+		transform: translateX(1rem);
+		opacity: 0;
+	}
+}
+
+@keyframes arrow-fixed-anim {
+	5% {
+		opacity: 0;
+	}
+
+	20% {
+		opacity: 0.4;
+	}
+
+	100% {
+		opacity: 1;
+	}
+}

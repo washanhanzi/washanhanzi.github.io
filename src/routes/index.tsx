@@ -1,53 +1,34 @@
-import { component$, Resource, useResource$, useStore } from '@builder.io/qwik';
+import { component$, useStore, useStylesScoped$, useWatch$ } from '@builder.io/qwik';
 import type { DocumentHead } from '@builder.io/qwik-city';
 import { GithubIcon, Menu } from './component';
-import { IndexMenu, IndexMenuType, Page } from './entity';
+import { Page } from './entity';
 import { repo } from './repository';
+import style from "./style/arrow.scss"
 
 export default component$(() => {
-  const pageState = useStore({ cur: 0, prev: false, pageSize: 1 })
-  const keys = Object.keys(repo)
-  const length = keys.length
+  useStylesScoped$(style)
 
-  const page = useResource$<Page>(({ track }) => {
+  const PAGE_SIZE = 7
+  const length = repo.length
+  const TOTAL_PAGE = Math.ceil(length / PAGE_SIZE)
+  const pageState = useStore<Page>({ cur: 0, menu: [], curPage: 1, isNextPage: true, isPrevPage: false })
+
+
+  useWatch$(({ track }) => {
     track(() => pageState.cur)
-    const res: Page = { menu: [], isNextPage: false, isPrevPage: false }
-    for (let i = pageState.cur; i < pageState.cur + pageState.pageSize + 1; i++) {
-      if (i < length) {
-        res.menu.push(repo[keys[i]])
-      } else {
-        break
-      }
+    if (pageState.cur - PAGE_SIZE >= 0) {
+      pageState.isPrevPage = true
+    } else {
+      pageState.isPrevPage = false
     }
-    return res
+    pageState.menu = repo.slice(pageState.cur, pageState.cur + PAGE_SIZE)
+    if (pageState.cur + PAGE_SIZE >= length) {
+      pageState.isNextPage = false
+    } else {
+      pageState.isNextPage = true
+    }
   })
 
-  const menu: IndexMenu[] = [
-    {
-      name: "A short journey with Rust in gRPC",
-      href: "/",
-      date: "2022-10-31",
-      type: IndexMenuType.UNSPECIFIED
-    },
-    {
-      name: "Show gRPC timeout with tests",
-      href: "https://github.com/washanhanzi/grpc-go-timeout",
-      date: "2022-10-31",
-      type: IndexMenuType.UNSPECIFIED
-    },
-    {
-      name: "Decido!",
-      href: "https://decido-theta.vercel.app",
-      date: "2022-07-22",
-      type: IndexMenuType.UNSPECIFIED
-    },
-    {
-      name: "Pragmatic gRPC 1",
-      href: "/posts/pragmaticgrpc1",
-      date: "2021-05-30",
-      type: IndexMenuType.UNSPECIFIED
-    }
-  ]
   return (
     <>
       <div class="grid grid-cols-1 md:grid-cols-[1fr_600px_1.1fr] gap-4 text-zinc-300 pt-3">
@@ -58,26 +39,40 @@ export default component$(() => {
             <GithubIcon />
           </a>
           <p class="py-4">Garbberish</p>
-          <Menu menu={menu} />
-          <Resource
-            value={page}
-            onPending={() => <div>Loading...</div>}
-            onRejected={(e) => <div>Error: {e.message}</div>}
-            onResolved={(page) => (
-              <div>
-                {
-                  page.menu.map(p => (
-                    <div>
-                      <a key={p.href} href={p.href}>
-                        {p.name}
-                      </a>
-                    </div>
-                  ))
-                }
-                <button onClick$={() => pageState.cur++}>{'>'}</button>
-              </div>
-            )}
-          ></Resource>
+
+          <Menu menu={pageState.menu}></Menu>
+
+          <div class="flex flex-row items-center pt-7">
+            <button class={`arrow flex-1 ${pageState.isPrevPage && "arrow--active"}`} onClick$={() => {
+              if (!pageState.isPrevPage) {
+                return
+              }
+              pageState.curPage -= 1
+              pageState.cur -= PAGE_SIZE
+            }}>
+              <svg class="relative inset-x-1/2" width="18px" height="17px" viewBox="0 0 18 17" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                <g transform="translate(8.500000, 8.500000) scale(-1, 1) translate(-8.500000, -8.500000)">
+                  <polygon class="arrow" points="16.3746667 8.33860465 7.76133333 15.3067621 6.904 14.3175671 14.2906667 8.34246869 6.908 2.42790698 7.76 1.43613596"></polygon>
+                  <polygon class="arrow-fixed" points="16.3746667 8.33860465 7.76133333 15.3067621 6.904 14.3175671 14.2906667 8.34246869 6.908 2.42790698 7.76 1.43613596"></polygon>
+                </g>
+              </svg>
+            </button>
+            <p class="text-center flex-1">{`PAGE: ${pageState.curPage} / ${TOTAL_PAGE}`}</p>
+            <button class={`arrow flex-1 ${pageState.isNextPage && "arrow--active"}`} onClick$={() => {
+              if (!pageState.isNextPage) {
+                return
+              }
+              pageState.curPage += 1
+              pageState.cur += PAGE_SIZE
+            }}>
+              <svg class="relative inset-x-1/2" width="18px" height="17px" viewBox="-1 0 18 17" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                <g>
+                  <polygon class="arrow" points="16.3746667 8.33860465 7.76133333 15.3067621 6.904 14.3175671 14.2906667 8.34246869 6.908 2.42790698 7.76 1.43613596"></polygon>
+                  <polygon class="arrow-fixed" points="16.3746667 8.33860465 7.76133333 15.3067621 6.904 14.3175671 14.2906667 8.34246869 6.908 2.42790698 7.76 1.43613596"></polygon>
+                </g>
+              </svg>
+            </button>
+          </div>
         </div>
         <div></div>
       </div>
