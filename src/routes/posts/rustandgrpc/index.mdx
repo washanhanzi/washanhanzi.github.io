@@ -78,7 +78,7 @@ And I am only a beginner of `rust`, it is definitely not pleasant to write the t
 
 And the final docker image size is about `140Mb`.
 
-So I told myself maybe I can remove all the `static dispatching` and `async_trait` stuff. I can tell after removing those things, the code becomes much cleaner and the final docker image size is only about `60Mb`, almost halving the build size.
+So I told myself maybe I can remove all the `static dispatching` and `async_trait` stuff. Let's name this method `no trait`. I can tell after removing `trait` and `generic`, the code becomes much cleaner and the final docker image size is only about `60Mb`, almost halving the build size.
 
 The code without trait:
 
@@ -99,6 +99,8 @@ impl UseCaseState {
     }
 }
 ```
+
+I also tried `dynamic dispatching`, build size wise, it's almost identical to `no trait` method.
 
 But maybe I can try `dynamic dispatching`, and compare the runtime performance with the `without trait` version.
 
