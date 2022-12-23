@@ -1,0 +1,190 @@
+---
+title: "A short journey into gRPC with Rust"
+---
+
+# A short journey into gRPC with Rust
+
+I use `tokio` and `seaORM` to build a simple CRUD gRPC app. Here is what I got from the process.
+
+## Trait or not trait?
+
+I'm a big fan of [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html), and coming from a background of `go`, when I think of using `rust` to write a gRPC service, I came up with the following folder structure in `/src`:
+
+```
+/controller
+/entity
+/repository
+/usecase
+main.rs
+controller.rs
+repository.rs
+usecase.rs
+```
+
+For example, the `usecase.rs` file contains the trait `UseCase` and its implementation `UseCaseState`. Although the trait `UseCase` only has 1 implementation, I like to keep it as a trait for clearly showing all the interfaces of `UseCase`.
+
+And at first I think I can do static dispatching with all the performance gain.
+
+The final code of `usecase.rs` looks like this:
+
+```rust
+use crate::repository::Repository;
+use anyhow::Result;
+use async_trait::async_trait;
+
+mod delete;
+mod get;
+mod update;
+
+#[async_trait]
+pub trait UseCase {
+	//get something
+    async fn get(&self, key: &str) -> Result<String>;
+	//update something
+    async fn update(&self, k: &str, v: &str) -> Result<()>;
+	//delete something
+    async fn delete(&self, k: &str) -> Result<()>;
+}
+
+pub struct UseCaseState<Repository> {
+    repo: Repository,
+}
+
+impl<T: Repository> UseCaseState<T> {
+    pub async fn new(repo: T) -> Self {
+        UseCaseState { repo, client }
+    }
+}
+
+#[async_trait]
+impl<T> UseCase for UseCaseState<T>
+where
+    T: Repository + Sync + Send,
+{
+    async fn get(&self, key: &str) -> Result<String> {
+        Ok(self.get_uc(key).await?)
+    }
+
+    async fn update(&self, k: &str, v: &str) -> Result<()> {
+        Ok(self.update_uc(k, v).await?)
+    }
+    async fn delete(&self, k: &str) -> Result<()> {
+        Ok(self.delete_uc(k).await?)
+    }
+}
+```
+
+I want to make the code more readable, so I separate the `UseCase` implementation into multiple files in `/usecase` folder, containing the `get_uc`, `update_uc` and `delete_uc` functions. You can see them from the three `mod` lines at the beginning.
+
+I must say this results in a lot of boilerplate code.
+
+And I am only a beginner of `rust`, it is not pleasant to write the trait bounds and lifetime specifier for generic in trait implementation.
+
+And the final docker image size is about `140Mb`.
+
+So I told myself maybe I can remove all the `static dispatching` and `async_trait` stuff. I can tell after removing `trait` and `generic`, the code becomes much cleaner and the final docker image size is only about `60Mb`, almost halving the build size.
+
+The code without trait:
+
+```rust
+use crate::repository::RepositoryState;
+
+mod delete;
+mod get;
+mod update;
+
+pub struct UseCaseState {
+    repo: RepositoryState,
+}
+
+impl UseCaseState {
+    pub async fn new(repo: RepositoryState) -> Self {
+        UseCaseState { repo, client }
+    }
+}
+```
+
+I also tried `dynamic dispatching`, with some struggle on the trait bound and lifetime(no surprise). Comparing the build size, it's almost identical to the image with no trait(with no surprise again).
+
+To me, I can see no benefits of using trait(especially static dispatching) with only 1 implementation. I think now I can only rely on my IDE to check all the implementations of a struct.
+
+## Tiny problems with Rust Analyzer and VSCode
+
+- code navigation
+
+When generating `rust` code from `proto` file, I utilize `tonic` with `build.rs`. The default location for the generated code will be somewhere like `target/debug/build/your_project_name-xxxxxxx/out/proto_package_name.rs`.
+
+Since I'm a beginner at `rust`, I have the urge to look at the generated code, but `rust analyzer` will disappoint me as it always directs me to the `include!` clause. As stated in this [issue](https://github.com/rust-lang/rust-analyzer/issues/3767). (+1 for `CLion`)
+
+- code completion
+
+`rust analyzer` can't auto-implement missing members of an async trait. Check this [issue](https://github.com/rust-lang/rust-analyzer/issues/13595). (+1 for `CLion`)
+
+## Interceptors
+
+I can't find any ecosystem of interceptors like [`go-grpc-middleware`](https://github.com/grpc-ecosystem/go-grpc-middleware). Although there are some crates providing functions for `tracing` and `metrics`, I think they are not ready to use like the `go` version above.
+
+In a use case, I want to check multiple metadata in the request. I come up with some code like this:
+
+```rust
+pub struct MyExtension {
+    pub user_id: String,
+    pub user_name: String,
+}
+
+pub fn unary_interceptor(mut req: Request<()>) -> Result<Request<()>, Status> {
+    let m = req.metadata().clone();
+    req.extensions_mut().insert(MyExtension {
+        user_id: m
+            .get("user-id")
+            .unwrap_or_status_err(Status::internal("user-id is missing"))?
+            .to_str()
+            .unwrap_or_status_err(Status::internal("user-id is invalid"))?
+            .to_string(),
+        user_name: m
+            .get("user-name")
+            .unwrap_or_status_err(Status::internal("user-name is missing"))?
+            .to_str()
+            .unwrap_or_status_err(Status::internal("user-name is invalid"))?
+            .to_string(),
+    });
+
+    Ok(req)
+}
+
+trait UnwrapOrErr<T> {
+    fn unwrap_or_status_err(self, err: Status) -> Result<T, Status>;
+}
+
+impl<T> UnwrapOrErr<T> for Option<T> {
+    fn unwrap_or_status_err(self, err: Status) -> Result<T, Status> {
+        match self {
+            Some(val) => Ok(val),
+            None => return Err(err),
+        }
+    }
+}
+
+impl<T, E> UnwrapOrErr<T> for Result<T, E>
+where
+    E: fmt::Debug,
+{
+    fn unwrap_or_status_err(self, err: Status) -> Result<T, Status> {
+        match self {
+            Ok(val) => Ok(val),
+            Err(e) => {
+                log::error!("{:?}", e);
+                return Err(err);
+            }
+        }
+    }
+}
+```
+
+As for logging, I use the tonic [tower example](https://github.com/hyperium/tonic/blob/master/examples/src/tower/server.rs) to add a logging middleware.
+
+## Conclusion
+
+I like `rust`, the `type` system is powerful, `async` is fun to learn, `log` is pleasant to use.
+
+But when I write `rust`, I must think about the program itself(like the borrowing rule) and the business logic, when I write `go`, business logic is all I need to concern about. Maybe it's just I'm a beginner at `rust`, but the ecosystem will be my first thing to check next time I'm thinking about using `rust` in a gRPC service.

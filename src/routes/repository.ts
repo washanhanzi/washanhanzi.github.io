@@ -1,12 +1,12 @@
 import { IndexMenu } from "./entity";
 
 export const repo: IndexMenu[] = [
-	// {
-	// 	name: "A short journey with Rust and gRPC",
-	// 	href: "/rustandgrpc",
-	// 	date: "2022-11-07",
-	// 	type: 1
-	// },
+	{
+		name: "A short journey into gRPC with Rust",
+		href: "/posts/grpcWithRust",
+		date: "2022-12-23",
+		type: 1
+	},
 	{
 		name: "Tests on gRPC timeout",
 		href: "https://github.com/washanhanzi/grpc-go-timeout",

@@ -1,9 +1,9 @@
-import { component$, useStore, useStylesScoped$, useWatch$ } from '@builder.io/qwik';
+import { component$, useStore, useStylesScoped$, useTask$ } from '@builder.io/qwik';
 import type { DocumentHead } from '@builder.io/qwik-city';
 import { GithubIcon, Menu } from './component';
 import { Page } from './entity';
 import { repo } from './repository';
-import style from "./style/arrow.scss"
+import style from "./style/arrow.scss?inline"
 
 export default component$(() => {
   useStylesScoped$(style)
@@ -14,7 +14,7 @@ export default component$(() => {
   const pageState = useStore<Page>({ cur: 0, menu: [], curPage: 1, isNextPage: true, isPrevPage: false })
 
 
-  useWatch$(({ track }) => {
+  useTask$(({ track }) => {
     track(() => pageState.cur)
     if (pageState.cur - PAGE_SIZE >= 0) {
       pageState.isPrevPage = true
