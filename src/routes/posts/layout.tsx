@@ -1,9 +1,9 @@
 import { component$, Slot, useStyles$ } from '@builder.io/qwik';
 import type { DocumentHead } from '@builder.io/qwik-city';
-import { Menu } from './component/menu';
-import styles from "./style/posts.css"
-import oneDark from "./style/oneDark.css"
-import prism from "./style/prism.css"
+// import { Menu } from './component/menu';
+import styles from "./style/posts.css?inline"
+import oneDark from "./style/oneDark.css?inline"
+import prism from "./style/prism.css?inline"
 
 export default component$(() => {
   useStyles$(styles)
@@ -15,9 +15,9 @@ export default component$(() => {
       <article class="prose dark:prose-invert p-4 overflow-x-hidden ::selection:bg-fuchsia-700">
         <Slot />
       </article>
-      <div class="invisible md:visible fixed top-24 right-10">
+      {/* <div class="invisible md:visible fixed top-24 right-10">
         <Menu />
-      </div>
+      </div> */}
     </div>
   );
 });

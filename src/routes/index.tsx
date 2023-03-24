@@ -1,21 +1,29 @@
-import { component$, useStore, useStylesScoped$, useTask$ } from '@builder.io/qwik';
+import { component$, useStore, $, useStyles$ } from '@builder.io/qwik';
 import type { DocumentHead } from '@builder.io/qwik-city';
-import { GithubIcon, Menu } from './component';
-import { Page } from './entity';
+import { Header } from './components/header/header';
+import { Menu } from './components/menu';
+import type { Page } from './entity';
 import { repo } from './repository';
-import style from "./style/arrow.scss?inline"
+import link from "./style/link.css?inline"
 
 export default component$(() => {
-  useStylesScoped$(style)
-
+  useStyles$(link)
   const PAGE_SIZE = 7
   const length = repo.length
   const TOTAL_PAGE = Math.ceil(length / PAGE_SIZE)
-  const pageState = useStore<Page>({ cur: 0, menu: [], curPage: 1, isNextPage: true, isPrevPage: false })
+  const pageState = useStore<Page>({ cur: 0, menu: repo.slice(0, PAGE_SIZE), curPage: 1, isNextPage: repo.length > PAGE_SIZE, isPrevPage: false })
 
+  const updateHandler = $((prev: boolean = false) => {
+    //prev page
+    if (prev) {
+      pageState.curPage -= 1
+      pageState.cur -= PAGE_SIZE
+    } else {
+      //next page
+      pageState.curPage += 1
+      pageState.cur += PAGE_SIZE
+    }
 
-  useTask$(({ track }) => {
-    track(() => pageState.cur)
     if (pageState.cur - PAGE_SIZE >= 0) {
       pageState.isPrevPage = true
     } else {
@@ -31,50 +39,23 @@ export default component$(() => {
 
   return (
     <>
-      <div class="grid grid-cols-1 md:grid-cols-[1fr_600px_1.1fr] gap-4 text-zinc-300 pt-3">
-        <div></div>
-        <div class="px-6">
-          <p class="text-4xl py-4">N1ll</p>
-          <a href="https://github.com/washanhanzi" target="_blank" rel="author" title="Github">
-            <GithubIcon />
-          </a>
-          <p class="py-4">Garbberish</p>
-
-          <Menu menu={pageState.menu}></Menu>
-
-          <div class="flex flex-row items-center pt-7">
-            <button class={`arrow flex-1 ${pageState.isPrevPage && "arrow--active"}`} onClick$={() => {
-              if (!pageState.isPrevPage) {
-                return
-              }
-              pageState.curPage -= 1
-              pageState.cur -= PAGE_SIZE
-            }}>
-              <svg class="relative inset-x-1/2" width="18px" height="17px" viewBox="0 0 18 17" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                <g transform="translate(8.500000, 8.500000) scale(-1, 1) translate(-8.500000, -8.500000)">
-                  <polygon class="arrow" points="16.3746667 8.33860465 7.76133333 15.3067621 6.904 14.3175671 14.2906667 8.34246869 6.908 2.42790698 7.76 1.43613596"></polygon>
-                  <polygon class="arrow-fixed" points="16.3746667 8.33860465 7.76133333 15.3067621 6.904 14.3175671 14.2906667 8.34246869 6.908 2.42790698 7.76 1.43613596"></polygon>
-                </g>
-              </svg>
-            </button>
-            <p class="text-center flex-1">{`PAGE: ${pageState.curPage} / ${TOTAL_PAGE}`}</p>
-            <button class={`arrow flex-1 ${pageState.isNextPage && "arrow--active"}`} onClick$={() => {
-              if (!pageState.isNextPage) {
-                return
-              }
-              pageState.curPage += 1
-              pageState.cur += PAGE_SIZE
-            }}>
-              <svg class="relative inset-x-1/2" width="18px" height="17px" viewBox="-1 0 18 17" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                <g>
-                  <polygon class="arrow" points="16.3746667 8.33860465 7.76133333 15.3067621 6.904 14.3175671 14.2906667 8.34246869 6.908 2.42790698 7.76 1.43613596"></polygon>
-                  <polygon class="arrow-fixed" points="16.3746667 8.33860465 7.76133333 15.3067621 6.904 14.3175671 14.2906667 8.34246869 6.908 2.42790698 7.76 1.43613596"></polygon>
-                </g>
-              </svg>
-            </button>
+      <Header />
+      <div class="card bg-base-100 rounded-lg shadow-lg px-4 py-4">
+        <Menu menu={pageState.menu}></Menu>
+        <div class="grid grid-cols-3 gap-4 justify-items-center items-baseline pt-4">
+          <button class="btn btn-circle btn-outline" onClick$={() => updateHandler(true)} disabled={!pageState.isPrevPage}>
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="4" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"></path>
+            </svg>
+          </button>
+          <div>
+            <p>{`${pageState.curPage} / ${TOTAL_PAGE}`}</p>
           </div>
+          <button class="btn btn-circle btn-outline" onClick$={() => updateHandler()} disabled={!pageState.isNextPage}>
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="4" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"></path>
+            </svg></button>
         </div>
-        <div></div>
       </div>
     </>
   );
@@ -82,4 +63,10 @@ export default component$(() => {
 
 export const head: DocumentHead = {
   title: 'N1ll',
+  meta: [
+    {
+      name: 'description',
+      content: 'A simple blog',
+    },
+  ],
 };

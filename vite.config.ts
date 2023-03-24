@@ -2,31 +2,26 @@ import { defineConfig } from "vite";
 import { qwikVite } from "@builder.io/qwik/optimizer";
 import { qwikCity } from "@builder.io/qwik-city/vite";
 import tsconfigPaths from "vite-tsconfig-paths";
+import rehypePrism from "rehype-prism-plus";
 import { partytownVite } from "@builder.io/partytown/utils";
 import { join } from "path";
-import rehypePrism from "rehype-prism-plus"
 
 export default defineConfig(() => {
   return {
-    ssr: {
-      target: "node"
-    },
     plugins: [
       qwikCity({
         mdxPlugins: {
           remarkGfm: true,
           rehypeSyntaxHighlight: false,
-          rehypeAutolinkHeadings: true
+          rehypeAutolinkHeadings: true,
         },
         mdx: {
-          rehypePlugins: [
-            [rehypePrism, { ignoreMissing: true }],
-          ],
-        }
+          rehypePlugins: [[rehypePrism, { ignoreMissing: true }]],
+        },
       }),
       qwikVite({ client: { outDir: "docs" } }),
       tsconfigPaths(),
-      partytownVite({ dest: join(__dirname, "docs", "partytown") }),
+      partytownVite({ dest: join(__dirname, "dist", "~partytown") }),
     ],
     preview: {
       headers: {

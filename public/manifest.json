@@ -4,6 +4,5 @@
   "short_name": "N1ll",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#172A53",
   "description": "A personal blog"
 }

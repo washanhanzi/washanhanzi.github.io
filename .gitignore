@@ -3,7 +3,6 @@
 /lib
 /lib-types
 /server
-docs
 
 # Development
 node_modules
@@ -11,7 +10,6 @@ node_modules
 # Cache
 .cache
 .mf
-.vscode
 .rollup.cache
 tsconfig.tsbuildinfo
 
@@ -25,6 +23,7 @@ pnpm-debug.log*
 lerna-debug.log*
 
 # Editor
+.vscode/*
 !.vscode/extensions.json
 .idea
 .DS_Store
@@ -37,13 +36,3 @@ lerna-debug.log*
 # Yarn
 .yarn/*
 !.yarn/releases
-
-# leftover
-.next
-tmp
-
-public
-.contentlayer
-out
-# starter app
-qwik-app

@@ -27,7 +27,7 @@ jobs:
       - name: build
         run: |
           pnpm install
-          pnpm run build
+          pnpm build
       - name: add and commit
         run: |
           git config --global url."https://${{ secrets.PERSONAL_TOKEN }}:x-oauth-basic@github.com/".insteadOf "https://github.com/"

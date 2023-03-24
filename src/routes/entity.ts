@@ -3,14 +3,13 @@ export interface IndexMenu {
 	href: string,
 	date: string,
 	//IndexMenuType
-	type: number
+	type: IndexMenuType
 }
 
-export enum IndexMenuType {
-	UNSPECIFIED = 0,
-	POST = 1,
-	EXTERNAL_LINK = 2,
-}
+export type IndexMenuType =
+	"UNSPECIFIED" |
+	"POST" |
+	"EXTERNAL_LINK"
 
 export interface Page {
 	cur: number,
