@@ -18,12 +18,12 @@ export default component$(() => {
         <meta charSet="utf-8" />
         <link rel="manifest" href="/manifest.json" />
         <meta name="description" content="A personal blog about programming and writing" />
-        <QwikPartytown forward={["dataLayer.push"]} />;
+        <QwikPartytown forward={["dataLayer.push"]} />
         <script
           async
           type="text/partytown"
           src="https://www.googletagmanager.com/gtag/js?id=G-FSZE01YQC3"
-        />;
+        />
 
       </head>
       <body lang="en">
