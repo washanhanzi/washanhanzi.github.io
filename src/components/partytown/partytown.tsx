@@ -14,5 +14,6 @@ export interface PartytownProps extends PartytownConfig { }
  * You can pass setting with props
  */
 export const QwikPartytown = (props: PartytownProps): any => {
+  props.lib = "/partytown/"
   return <script dangerouslySetInnerHTML={partytownSnippet(props)} />;
 };
