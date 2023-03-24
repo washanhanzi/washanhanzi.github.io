@@ -9,7 +9,7 @@ export const useServerTimeLoader = routeLoader$(() => {
 
 export default component$(() => {
   return (
-    <div class="grid grid-cols-1 gap-4 px-10 mt-7 sm:max-w-5xl sm:mx-auto">
+    <div class="grid grid-cols-1 gap-4 px-10 mt-7 w-full md:max-w-5xl md:mx-auto dark">
       <main>
         <Slot />
       </main>
