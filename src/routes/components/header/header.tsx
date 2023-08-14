@@ -7,7 +7,7 @@ export const Header = () => (
 				<h1 class="text-5xl font-bold">N1ll</h1>
 			</div>
 			<div class="py-2" >
-				<button >
+				<button aria-label="github profile page">
 					<a href="https://github.com/washanhanzi" target="_blank" rel="author" title="Github">
 						<GithubIcon />
 					</a>
