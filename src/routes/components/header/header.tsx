@@ -6,10 +6,12 @@ export const Header = () => (
 			<div class="py-2">
 				<h1 class="text-5xl font-bold">N1ll</h1>
 			</div>
-			<div class="py-2">
-				<a href="https://github.com/washanhanzi" target="_blank" rel="author" title="Github">
-					<GithubIcon />
-				</a>
+			<div class="py-2" >
+				<button >
+					<a href="https://github.com/washanhanzi" target="_blank" rel="author" title="Github">
+						<GithubIcon />
+					</a>
+				</button>
 			</div>
 			<p class="py-2">Garbberish</p>
 		</div>

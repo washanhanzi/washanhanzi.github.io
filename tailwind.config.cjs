@@ -2,19 +2,7 @@
 module.exports = {
 	daisyui: {
 		themes: [
-			{
-				mytheme: {
-					"primary": "#61f4d2",
-					"secondary": "#55e0a1",
-					"accent": "#a7c62b",
-					"neutral": "#1D141F",
-					"base-100": "#3B284D",
-					"info": "#86ACDA",
-					"success": "#25AD6B",
-					"warning": "#B88C14",
-					"error": "#DC2E42",
-				},
-			},
+			"night",
 		],
 	},
 	content: ['./src/**/*.{js,ts,tsx,mdx}'],
@@ -22,7 +10,10 @@ module.exports = {
 	darkMode: 'class',
 	theme: {
 		extend: {
-			fontSize: {
+			colors: {
+				"cold-start": "#2c9bdf",
+				"cold-mid": "#19d3b5",
+				"cold-end": "#a4f158",
 			}
 		},
 	}

@@ -4,10 +4,8 @@ import { Header } from './components/header/header';
 import { Menu } from './components/menu';
 import type { Page } from './entity';
 import { repo } from './repository';
-import link from "./style/link.css?inline"
 
 export default component$(() => {
-  useStyles$(link)
   const PAGE_SIZE = 7
   const length = repo.length
   const TOTAL_PAGE = Math.ceil(length / PAGE_SIZE)
@@ -43,7 +41,7 @@ export default component$(() => {
       <div class="card bg-base-100 rounded-lg shadow-lg px-4 py-4">
         <Menu menu={pageState.menu}></Menu>
         <div class="grid grid-cols-3 gap-4 justify-items-center items-baseline pt-4">
-          <button class="btn btn-circle btn-outline" onClick$={() => updateHandler(true)} disabled={!pageState.isPrevPage}>
+          <button class="btn btn-square btn-outline" onClick$={() => updateHandler(true)} disabled={!pageState.isPrevPage}>
             <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="4" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"></path>
             </svg>
@@ -51,7 +49,7 @@ export default component$(() => {
           <div>
             <p>{`${pageState.curPage} / ${TOTAL_PAGE}`}</p>
           </div>
-          <button class="btn btn-circle btn-outline" onClick$={() => updateHandler()} disabled={!pageState.isNextPage}>
+          <button class="btn btn-square btn-outline" onClick$={() => updateHandler()} disabled={!pageState.isNextPage}>
             <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="4" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"></path>
             </svg></button>
