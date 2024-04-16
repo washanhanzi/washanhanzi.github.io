@@ -80,10 +80,6 @@ I must say this results in a lot of boilerplate code.
 
 And I am only a beginner of `rust`, it is not pleasant to write the trait bounds and lifetime specifier for generic in trait implementation.
 
-And the final docker image size is about `140Mb`.
-
-So I told myself maybe I can remove all the `static dispatching` and `async_trait` stuff. I can tell after removing `trait` and `generic`, the code becomes much cleaner and the final docker image size is only about `60Mb`, almost halving the build size.
-
 The code without trait:
 
 ```rust
