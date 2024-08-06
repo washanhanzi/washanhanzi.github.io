@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "@builder.io/partytown": "^0.8.2",
-    "@builder.io/qwik": "1.2.6",
+    "@builder.io/qwik": "1.7.3",
     "@builder.io/qwik-city": "1.2.6",
     "@tailwindcss/typography": "^0.5.12",
     "@types/eslint": "8.21.2",
